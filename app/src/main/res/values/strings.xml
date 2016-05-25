@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Tenten</string>
+    <string name="action_settings">Settings</string>
+    <string name="draw" />
+    <string name="start_game">start game</string>
+    <string name="your_score">Your Score:</string>
+</resources>

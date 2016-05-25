@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/redbackground"
+    tools:context="com.cheong.tenten.GameActivity">
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/drawButton"
+        android:src="@drawable/back"
+        android:background="@null"
+        android:layout_marginTop="180dp"
+        android:layout_centerHorizontal="true"
+        />
+
+    <ImageView
+        android:id="@+id/boxImage0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/boxImage1"
+        android:layout_below="@+id/drawButton"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/empty"
+        android:padding="2dp"
+        android:background="#000000" />
+
+    <ImageView
+        android:id="@+id/boxImage1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/drawButton"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/empty"
+        android:padding="2dp"
+        android:background="#000000"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:id="@+id/boxImage2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/boxImage1"
+        android:layout_below="@+id/drawButton"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/empty"
+        android:padding="2dp"
+        android:background="#000000" />
+
+    <ImageView
+        android:id="@+id/boxImage3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/boxImage4"
+        android:layout_below="@+id/boxImage0"
+        android:src="@drawable/empty"
+        android:padding="2dp"
+        android:background="#000000" />
+
+    <ImageView
+        android:id="@+id/boxImage4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/boxImage1"
+        android:src="@drawable/empty"
+        android:padding="2dp"
+        android:background="#000000"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:id="@+id/boxImage5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/boxImage4"
+        android:layout_below="@+id/boxImage2"
+        android:src="@drawable/empty"
+        android:padding="2dp"
+        android:background="#000000" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="25dp"
+        android:text="@string/your_score"
+        android:textColor="#ffff00"
+        android:editable="false"
+        android:id="@+id/playerScoreStaticText"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="60dp"
+        android:layout_marginBottom="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="25dp"
+        android:text="0"
+        android:textColor="#ffff00"
+        android:editable="false"
+        android:id="@+id/playerScore"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="22dp"
+        android:layout_marginBottom="10dp" />
+
+</RelativeLayout>
+
