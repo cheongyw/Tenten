@@ -27,18 +27,31 @@ public class Card {
             R.drawable.a10,
             R.drawable.a11,
             R.drawable.a12,
-            R.drawable.a13
+            R.drawable.a13,
+            R.drawable.b1,
+            R.drawable.b2,
+            R.drawable.b3,
+            R.drawable.b4,
+            R.drawable.b5,
+            R.drawable.b6,
+            R.drawable.b7,
+            R.drawable.b8,
+            R.drawable.b9,
+            R.drawable.b10,
+            R.drawable.b11,
+            R.drawable.b12,
+            R.drawable.b13
     };
 
-    private String getSuitText(int value)
+    private String getSuitText()
     {
-        if (value<13) {
+        if (m_value<13) {
             return "CLUBS";
         }
-        else if(value<26) {
+        else if(m_value<26) {
             return "DIAMONDS";
         }
-        else if(value<39) {
+        else if(m_value<39) {
             return "HEARTS";
         }
         else {
@@ -48,17 +61,33 @@ public class Card {
 
     public int getValue()
     {
-        int temp = (m_value + 1) % 14;
-        if (temp == 0) {
-            temp = 13;
+        if (m_value<13) {
+            return m_value + 1;
         }
-        return temp;
+        else if (m_value<26) {
+            return m_value - 12;
+        }
+        else if (m_value<39) {
+            return m_value - 25;
+        }
+        else {
+            return m_value - 38;
+        }
     }
 
-    private String getValueText(int value) {
-        int temp = (value + 1) % 14;
-        if (temp == 0) {
-            temp = 13;
+    private String getValueText() {
+        int temp;
+        if (m_value<13) {
+            temp = m_value + 1;
+        }
+        else if (m_value<26) {
+            temp = m_value - 12;
+        }
+        else if (m_value<39) {
+            temp = m_value - 25;
+        }
+        else {
+            temp = m_value - 38;
         }
         String text = null;
         switch (temp) {
@@ -106,7 +135,7 @@ public class Card {
 
     @Override
     public String toString() {
-        return getValueText(m_value) + " of " + getSuitText(m_value);
+        return getValueText() + " of " + getSuitText();
     }
 
     public boolean isFaceUp() {

@@ -7,6 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:id="@+id/gamelayout"
     android:background="@drawable/redbackground"
     tools:context="com.cheong.tenten.GameActivity">
 
@@ -42,8 +43,19 @@
         android:id="@+id/drawButton"
         android:src="@drawable/back"
         android:background="@null"
-        android:layout_marginTop="180dp"
+        android:layout_marginTop="160dp"
         android:layout_centerHorizontal="true"
+        />
+
+    <TextView
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:textSize="15dp"
+        android:text="@string/choose_one_to_discard"
+        android:id="@+id/chooseDiscardStaticText"
+        android:layout_below="@+id/drawButton"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible"
         />
 
     <ImageView
@@ -52,7 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@+id/boxImage1"
         android:layout_below="@+id/drawButton"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="40dp"
         android:src="@drawable/empty"
         android:padding="2dp"
         android:background="#000000" />
@@ -62,7 +74,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/drawButton"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="40dp"
         android:src="@drawable/empty"
         android:padding="2dp"
         android:background="#000000"
@@ -74,7 +86,7 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/boxImage1"
         android:layout_below="@+id/drawButton"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="40dp"
         android:src="@drawable/empty"
         android:padding="2dp"
         android:background="#000000" />
