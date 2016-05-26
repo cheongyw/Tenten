@@ -52,15 +52,18 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         boxImages = new ImageView[]{boxImage0, boxImage1, boxImage2, boxImage3, boxImage4, boxImage5};
         boxIsEmpty = new boolean[6];
         boxValue = new int[6];
-        for (int i = 0; i < 6; i++) {
-            boxIsEmpty[i] = true;
-            boxValue[i] = 0;
-        }
-
         drawButton.setOnClickListener(this);
         computerCardValues = new ArrayList<Integer>();
         drawnCards = new ArrayList<Integer>();
         gameEnded = false;
+
+        for (int i = 0; i < 6; i++) {
+            boxIsEmpty[i] = true;
+            boxValue[i] = 0;
+        }
+        for (int j = 0; j < 4; j++) {
+            drawCard();
+        }
     }
 
     @Override
@@ -170,25 +173,54 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void replaceCard(Card card, int value) {
-        TextView textView = (TextView)findViewById(R.id.chooseDiscardStaticText);
-        textView.setVisibility(TextView.VISIBLE);
-
+        final ImageButton drawButton = (ImageButton) findViewById(R.id.drawButton);
+        drawButton.setClickable(false);
+        final TextView discardMessage = (TextView)findViewById(R.id.chooseDiscardStaticText);
+        discardMessage.setVisibility(TextView.VISIBLE);
+        final ImageView drawnCardImage = (ImageView)findViewById(R.id.drawnCardImage);
+        drawnCardImage.setImageResource(card.getImage());
+        final TextView tv = (TextView)findViewById(R.id.playerScore);
         final int val = card.getValue();
         final int v = value;
         final int image = card.getImage();
+
+        drawnCardImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                discardMessage.setVisibility(TextView.INVISIBLE);
+                drawnCards.add(v);
+                drawnCardImage.setImageResource(R.drawable.empty);
+                drawnCardImage.setClickable(false);
+                drawButton.setClickable(true);
+                for (int i=0; i<boxImages.length; i++) {
+                    boxImages[i].setClickable(false);
+                }
+                if (drawnCards.size()==26) {
+                    endGame();
+                }
+                else {
+                    computerMoves();
+                }
+            }
+        });
+
         for (int i=0; i<boxImages.length; i++) {
             final int id = i;
             boxImages[id].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    TextView textView = (TextView)findViewById(R.id.chooseDiscardStaticText);
-                    textView.setVisibility(TextView.INVISIBLE);
-                    TextView tv = (TextView)findViewById(R.id.playerScore);
+                    discardMessage.setVisibility(TextView.INVISIBLE);
                     updateScore(-boxValue[id], tv);
                     boxValue[id] = val;
                     boxImages[id].setImageResource(image);
                     updateScore(val, tv);
                     drawnCards.add(v);
+                    drawnCardImage.setImageResource(R.drawable.empty);
+                    drawnCardImage.setClickable(false);
+                    drawButton.setClickable(true);
+                    for (int i=0; i<boxImages.length; i++) {
+                        boxImages[i].setClickable(false);
+                    }
                     if (drawnCards.size()==26) {
                         endGame();
                     }
@@ -207,29 +239,34 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
         Card card = new Card(value);
         if (computerCardValues.size() == 6) {
-            replaceComputerCard();
+            replaceComputerCard(card.getValue());
+        }else{
+            computerCardValues.add(card.getValue());
+            TextView tv = (TextView) findViewById(R.id.computerScore);
+            updateScore(card.getValue(), tv);
         }
-        TextView tv = (TextView) findViewById(R.id.computerScore);
-        updateScore(card.getValue(), tv);
-        computerCardValues.add(card.getValue());
         drawnCards.add(value);
         if (drawnCards.size() == 26) {
             endGame();
         }
     }
 
-    private void replaceComputerCard() {
-        int min = computerCardValues.get(0);
-        int index = 0;
-        for (int i = 1; i<computerCardValues.size(); i++) {
+    private void replaceComputerCard(int k) {
+        int min = k;
+        int index = -1;
+        for (int i = 0; i<computerCardValues.size(); i++) {
             if (computerCardValues.get(i) < min) {
                 min = computerCardValues.get(i);
                 index = i;
             }
         }
-        computerCardValues.remove(index);
-        TextView tv = (TextView) findViewById(R.id.computerScore);
-        updateScore(-min, tv);
+        if (index!=-1) {
+            computerCardValues.remove(index);
+            TextView tv = (TextView) findViewById(R.id.computerScore);
+            updateScore(-min, tv);
+            updateScore(k, tv);
+            computerCardValues.add(k);
+        }
     }
 
     private void endGame() {

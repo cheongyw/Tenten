@@ -19,9 +19,8 @@
         android:textColor="#ffff00"
         android:editable="false"
         android:id="@+id/computerScoreStaticText"
-        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="70dp" />
+        android:layout_marginTop="50dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -43,9 +42,18 @@
         android:id="@+id/drawButton"
         android:src="@drawable/back"
         android:background="@null"
-        android:layout_marginTop="160dp"
-        android:layout_centerHorizontal="true"
+        android:layout_marginTop="140dp"
+        android:layout_marginLeft="100dp"
         />
+
+    <ImageView
+        android:id="@+id/drawnCardImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/drawButton"
+        android:layout_marginTop="140dp"
+        android:src="@drawable/empty"
+        android:padding="4dp" />
 
     <TextView
         android:layout_width="220dp"
@@ -62,64 +70,58 @@
         android:id="@+id/boxImage0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@+id/boxImage1"
+        android:layout_toLeftOf="@+id/boxImage2"
         android:layout_below="@+id/drawButton"
         android:layout_marginTop="40dp"
         android:src="@drawable/empty"
-        android:padding="2dp"
-        android:background="#000000" />
+        android:padding="4dp" />
 
     <ImageView
         android:id="@+id/boxImage1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/drawButton"
-        android:layout_marginTop="40dp"
+        android:layout_toLeftOf="@+id/boxImage3"
+        android:layout_below="@+id/boxImage0"
         android:src="@drawable/empty"
-        android:padding="2dp"
-        android:background="#000000"
-        android:layout_centerHorizontal="true" />
+        android:padding="4dp" />
 
     <ImageView
         android:id="@+id/boxImage2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/boxImage1"
         android:layout_below="@+id/drawButton"
         android:layout_marginTop="40dp"
         android:src="@drawable/empty"
-        android:padding="2dp"
-        android:background="#000000" />
+        android:padding="4dp"
+        android:layout_centerHorizontal="true" />
 
     <ImageView
         android:id="@+id/boxImage3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@+id/boxImage4"
-        android:layout_below="@+id/boxImage0"
+        android:layout_below="@+id/boxImage2"
         android:src="@drawable/empty"
-        android:padding="2dp"
-        android:background="#000000" />
+        android:padding="4dp"
+        android:layout_centerHorizontal="true" />
 
     <ImageView
         android:id="@+id/boxImage4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/boxImage1"
+        android:layout_toRightOf="@+id/boxImage2"
+        android:layout_below="@+id/drawButton"
+        android:layout_marginTop="40dp"
         android:src="@drawable/empty"
-        android:padding="2dp"
-        android:background="#000000"
-        android:layout_centerHorizontal="true" />
+        android:padding="4dp" />
 
     <ImageView
         android:id="@+id/boxImage5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/boxImage4"
-        android:layout_below="@+id/boxImage2"
+        android:layout_toRightOf="@+id/boxImage3"
+        android:layout_below="@+id/boxImage4"
         android:src="@drawable/empty"
-        android:padding="2dp"
-        android:background="#000000" />
+        android:padding="4dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -130,10 +132,10 @@
         android:editable="false"
         android:id="@+id/playerScoreStaticText"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginRight="60dp"
-        android:layout_marginBottom="10dp" />
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="18dp"
+        android:layout_marginBottom="50dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -147,7 +149,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginRight="22dp"
-        android:layout_marginBottom="10dp" />
+        android:layout_marginBottom="20dp" />
 
 </RelativeLayout>
 

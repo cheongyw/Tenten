@@ -3,7 +3,7 @@
     <string name="action_settings">Settings</string>
     <string name="draw" />
     <string name="start_game">Start Game</string>
-    <string name="your_score">Your score:</string>
+    <string name="your_score">You</string>
     <string name="_0">0</string>
     <string name="computer_score">Computer</string>
     <string name="choose_one_to_discard">You have the maximum number of cards. Choose one to discard.</string>
