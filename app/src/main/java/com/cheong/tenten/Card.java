@@ -7,11 +7,18 @@ public class Card {
 
     private boolean faceup;
     private int m_value;
+    private CharSequence m_ability;
 
     public Card(int value)
     {
         m_value = value;
         faceup = false;
+        if (value==0||value==13||value==26||value==39) {
+            m_ability = "View opponent's hand";
+        }
+        else {
+            m_ability = "None";
+        }
     }
 
     // All cards in a deck
@@ -42,6 +49,14 @@ public class Card {
             R.drawable.b12,
             R.drawable.b13
     };
+
+    public int getRank() {
+        return m_value;
+    }
+
+    public CharSequence getAbility() {
+        return m_ability;
+    }
 
     private String getSuitText()
     {

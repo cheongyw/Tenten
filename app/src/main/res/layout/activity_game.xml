@@ -34,7 +34,14 @@
         android:layout_centerHorizontal="true"
         />
 
-
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/highestCardImage"
+        android:layout_toRightOf="@+id/computerScoreStaticText"
+        android:layout_marginTop="50dp"
+        android:padding="2dp"
+        android:src="@drawable/empty"/>
 
     <ImageButton
         android:layout_width="wrap_content"
@@ -51,7 +58,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/drawButton"
-        android:layout_marginTop="140dp"
+        android:layout_marginTop="136dp"
         android:src="@drawable/empty"
         android:padding="4dp" />
 
@@ -150,6 +157,14 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="22dp"
         android:layout_marginBottom="20dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/use_ability"
+        android:id="@+id/useAbility"
+        android:layout_below="@+id/boxImage3"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
 

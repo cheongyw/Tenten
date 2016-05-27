@@ -7,4 +7,5 @@
     <string name="_0">0</string>
     <string name="computer_score">Computer</string>
     <string name="choose_one_to_discard">You have the maximum number of cards. Choose one to discard.</string>
+    <string name="use_ability">Use Ability</string>
 </resources>
