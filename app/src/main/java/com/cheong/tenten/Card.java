@@ -16,6 +16,15 @@ public class Card {
         if (value==0||value==13||value==26||value==39) {
             m_ability = "View opponent's hand";
         }
+        else if (value==33||value==46) {
+            m_ability = "Opponent discards 2 random cards";
+        }
+        else if (value==34||value==47) {
+            m_ability = "Draw 2 cards";
+        }
+        else if (value==35||value==48){
+            m_ability = "Draw 3 cards";
+        }
         else {
             m_ability = "None";
         }
@@ -47,7 +56,33 @@ public class Card {
             R.drawable.b10,
             R.drawable.b11,
             R.drawable.b12,
-            R.drawable.b13
+            R.drawable.b13,
+            R.drawable.c1,
+            R.drawable.c2,
+            R.drawable.c3,
+            R.drawable.c4,
+            R.drawable.c5,
+            R.drawable.c6,
+            R.drawable.c7,
+            R.drawable.c8,
+            R.drawable.c9,
+            R.drawable.c10,
+            R.drawable.c11,
+            R.drawable.c12,
+            R.drawable.c13,
+            R.drawable.d1,
+            R.drawable.d2,
+            R.drawable.d3,
+            R.drawable.d4,
+            R.drawable.d5,
+            R.drawable.d6,
+            R.drawable.d7,
+            R.drawable.d8,
+            R.drawable.d9,
+            R.drawable.d10,
+            R.drawable.d11,
+            R.drawable.d12,
+            R.drawable.d13
     };
 
     public int getRank() {
