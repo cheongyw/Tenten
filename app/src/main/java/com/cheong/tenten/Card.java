@@ -1,9 +1,12 @@
 package com.cheong.tenten;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Cheong on 23/5/2016.
  */
-public class Card {
+public class Card implements Comparable<Card> {
 
     private boolean faceup;
     private int m_value;
@@ -24,6 +27,9 @@ public class Card {
         }
         else if (value==35||value==48){
             m_ability = "Draw 3 cards";
+        }
+        else if (value==51) {
+            m_ability = "Opponent discards 3 highest cards";
         }
         else {
             m_ability = "None";
@@ -200,4 +206,23 @@ public class Card {
         return allCards[m_value];
     }
 
+    @Override
+    public int compareTo(Card other) {
+        if (this.getValue() < other.getValue()) {
+            return -1;
+        }
+        else if (this.getValue() > other.getValue()) {
+            return 1;
+        }
+        // break ties with suit
+        else if (this.getRank() < other.getRank()) {
+            return -1;
+        }
+        else if (this.getRank() > other.getRank()) {
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
 }

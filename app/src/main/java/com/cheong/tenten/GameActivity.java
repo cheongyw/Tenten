@@ -1,20 +1,23 @@
 package com.cheong.tenten;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
@@ -350,7 +353,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
         else {
             TextView showMessage = (TextView)findViewById(R.id.showMessage);
-            showMessage.setText("It's your turn.");
+            showMessage.setText("It's your turn. Draw a card or use an ability.");
             drawButton.setClickable(true);
             useAbility.setClickable(false);
             useAbility.setTextColor(Color.parseColor("#60C0C0C0"));
@@ -389,6 +392,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private void endGame() {
         gameEnded = true;
         drawButton.setImageResource(R.drawable.empty);
+        drawButton.setClickable(false);
+        useAbility.setClickable(false);
         TextView playertv = (TextView)findViewById(R.id.playerScore);
         int playerScore = Integer.parseInt(playertv.getText().toString());
         TextView comptv = (TextView)findViewById(R.id.computerScore);
@@ -409,27 +414,55 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     /* -----------Methods for card abilities ------------------------- */
 
-    private void executeAbility(int boxNumber) {
+    private void executeAbility(int boxNum) {
         useAbility.setClickable(false);
         useAbility.setTextColor(Color.parseColor("#60C0C0C0"));
         useAbility.setBackgroundColor(Color.parseColor("#60C0C0C0"));
-        if (boxCards[boxNumber].getAbility() == "View opponent's hand") {
-            view(boxNumber);
+        final int boxNumber = boxNum;
+        if (boxCards[boxNumber].getAbility() == "Opponent discards 3 highest cards") {
+            Intent intent = new Intent(this, ExplosiveActivity.class);
+            startActivity(intent);
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    discard3highest(boxNumber);
+                }
+            }, 6000);
         }
-        else if (boxCards[boxNumber].getAbility() == "Opponent discards 2 random cards") {
-            discard2(boxNumber);
-        }
-        else if (boxCards[boxNumber].getAbility() == "Draw 2 cards") {
-            draw2(boxNumber);
-        }
-        else if (boxCards[boxNumber].getAbility() == "Draw 3 cards") {
-            draw3(boxNumber);
+        else {
+            final TextView abilityText = (TextView) findViewById(R.id.abilityText);
+            abilityText.setBackgroundColor(Color.BLACK);
+            abilityText.setText("You used " + boxCards[boxNumber].toString() + "!");
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    abilityText.setText(null);
+                    abilityText.setBackgroundColor(Color.TRANSPARENT);
+                    if (boxCards[boxNumber].getAbility() == "View opponent's hand") {
+                        view(boxNumber);
+                    }
+                    else if (boxCards[boxNumber].getAbility() == "Opponent discards 2 random cards") {
+                        discard2(boxNumber);
+                    }
+                    else if (boxCards[boxNumber].getAbility() == "Draw 2 cards") {
+                        draw2(boxNumber);
+                    }
+                    else if (boxCards[boxNumber].getAbility() == "Draw 3 cards") {
+                        draw3(boxNumber);
+                    }
+                }
+            }, 3000);
         }
     }
 
     private void view(int boxNumber) {
         if (computerCards.size()>0) {
             final ImageView img = (ImageView) findViewById(R.id.highestCardImage);
+            final ImageView glitter = (ImageView) findViewById(R.id.glitterFrame);
+            glitter.setBackgroundResource(R.drawable.glitter);
+            final AnimationDrawable frameAnimation = (AnimationDrawable) glitter.getBackground();
+            frameAnimation.start();
+
             img.postDelayed(new Runnable() {
                 int m = 0;
                 public void run() {
@@ -442,6 +475,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                         img.postDelayed(new Runnable() {
                             public void run() {
                                 img.setImageResource(R.drawable.empty);
+                                glitter.setBackgroundResource(R.drawable.empty);
                                 computerMoves();
                             }
                         }, 1000);
@@ -460,6 +494,18 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void discard2(int boxNumber) {
+        final ImageView blastPosition = (ImageView) findViewById(R.id.blastPosition);
+        final AnimationDrawable a = (AnimationDrawable) blastPosition.getBackground();
+        blastPosition.setVisibility(View.VISIBLE);
+        a.start();
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                blastPosition.clearAnimation();
+                blastPosition.setVisibility(View.INVISIBLE);
+            }
+        }, 1000);
+
         if (computerCards.size()>0) {
             int index = random.nextInt(computerCards.size());
             int valueToDeduct = computerCards.get(index).getValue();
@@ -500,5 +546,37 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         boxCards[boxNumber] = null;
 
         drawCard(3);
+    }
+
+    private void discard3highest(int boxNumber) {
+        final ImageView blastPosition = (ImageView) findViewById(R.id.blastPosition);
+        final AnimationDrawable a = (AnimationDrawable) blastPosition.getBackground();
+        blastPosition.setVisibility(View.VISIBLE);
+        a.start();
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                blastPosition.clearAnimation();
+                blastPosition.setVisibility(View.INVISIBLE);
+            }
+        }, 1000);
+
+        Collections.sort(computerCards);
+        int valueToDeduct;
+        for (int i = 0; i < 3; i++) {
+            if (computerCards.size()>0) {
+                valueToDeduct = computerCards.get(computerCards.size()-1).getValue();
+                computerCards.remove(computerCards.size()-1);
+                TextView tv = (TextView) findViewById(R.id.computerScore);
+                updateScore(-valueToDeduct, tv);
+            }
+        }
+
+        TextView tv = (TextView)findViewById(R.id.playerScore);
+        updateScore(-13, tv);
+        boxImages[boxNumber].setImageResource(R.drawable.empty);
+        boxIsEmpty[boxNumber] = true;
+        boxCards[boxNumber] = null;
+        computerMoves();
     }
 }
