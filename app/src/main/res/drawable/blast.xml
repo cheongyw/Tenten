@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list android:id="@+id/blastAnimation"
+    android:oneshot="true"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/blast0" android:duration="100" />
+    <item android:drawable="@drawable/blast1" android:duration="100" />
+    <item android:drawable="@drawable/blast2" android:duration="100" />
+    <item android:drawable="@drawable/blast3" android:duration="100" />
+    <item android:drawable="@drawable/blast4" android:duration="100" />
+    <item android:drawable="@drawable/blast5" android:duration="100" />
+    <item android:drawable="@drawable/blast6" android:duration="100" />
+    <item android:drawable="@drawable/blast7" android:duration="100" />
+    <item android:drawable="@drawable/blast8" android:duration="100" />
+</animation-list>
