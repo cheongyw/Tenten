@@ -76,20 +76,19 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             boxCards[i] = null;
         }
         for (int j = 0; j < 4; j++) {
-            drawCard(1);
-        }
-        useAbility.setClickable(false);
-        useAbility.setTextColor(Color.parseColor("#60C0C0C0"));
-        useAbility.setBackgroundColor(Color.parseColor("#60C0C0C0"));
-        for (int k = 0; k < 4; k++) {
-            if (!boxIsEmpty[k]) {
-                if (boxCards[k].getAbility()!="None") {
-                    useAbility.setClickable(true);
-                    useAbility.setTextColor(Color.BLACK);
-                    useAbility.setBackgroundColor(Color.LTGRAY);
-                }
+            int value = random.nextInt(52);
+            while(drawnCards.contains(value)){
+                value = random.nextInt(52);
             }
+            Card card = new Card(value);
+            boxImages[j].setImageResource(card.getImage());
+            boxIsEmpty[j] = false;
+            boxCards[j] = card;
+            TextView tv = (TextView)findViewById(R.id.playerScore);
+            updateScore(card.getValue(), tv);
+            drawnCards.add(value);
         }
+        computerDrawCards(4);
     }
 
     @Override
@@ -335,6 +334,27 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void computerMoves() {
+        boolean hasAbility = false;
+        int index = -1;
+        if (computerCards.size() > 0) {
+            for (int k = 0; k < computerCards.size(); k++) {
+                CharSequence ability = computerCards.get(k).getAbility();
+                if (ability!="None" && ability!="View opponent's hand") {
+                    hasAbility = true;
+                    index = k;
+                }
+            }
+        }
+
+        if (hasAbility) {
+            computerExecuteAbility(index);
+        }
+        else {
+            computerDrawCards(1);
+        }
+    }
+
+    private void computerDrawCards(int howMany) {
         int value = random.nextInt(52);
         while (drawnCards.contains(value)) {
             value = random.nextInt(52);
@@ -352,19 +372,29 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             endGame();
         }
         else {
-            TextView showMessage = (TextView)findViewById(R.id.showMessage);
-            showMessage.setText("It's your turn. Draw a card or use an ability.");
-            drawButton.setClickable(true);
-            useAbility.setClickable(false);
-            useAbility.setTextColor(Color.parseColor("#60C0C0C0"));
-            useAbility.setBackgroundColor(Color.parseColor("#60C0C0C0"));
-            for (int j=0; j<boxCards.length; j++) {
-                if (!boxIsEmpty[j]) {
-                    if (boxCards[j].getAbility()!="None") {
-                        useAbility.setClickable(true);
-                        useAbility.setTextColor(Color.BLACK);
-                        useAbility.setBackgroundColor(Color.LTGRAY);
-                    }
+            if (howMany != 1) {
+                howMany--;
+                computerDrawCards(howMany);
+            }
+            else {
+                playerTurn();
+            }
+        }
+    }
+
+    private void playerTurn() {
+        TextView showMessage = (TextView)findViewById(R.id.showMessage);
+        showMessage.setText("It's your turn. Draw a card or use an ability.");
+        drawButton.setClickable(true);
+        useAbility.setClickable(false);
+        useAbility.setTextColor(Color.parseColor("#60C0C0C0"));
+        useAbility.setBackgroundColor(Color.parseColor("#60C0C0C0"));
+        for (int j=0; j<boxCards.length; j++) {
+            if (!boxIsEmpty[j]) {
+                if (boxCards[j].getAbility()!="None") {
+                    useAbility.setClickable(true);
+                    useAbility.setTextColor(Color.BLACK);
+                    useAbility.setBackgroundColor(Color.LTGRAY);
                 }
             }
         }
@@ -412,20 +442,32 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         outcome.show();
     }
 
-    /* -----------Methods for card abilities ------------------------- */
+    /* -----------Methods for card abilities (User) ------------------------- */
 
     private void executeAbility(int boxNum) {
         useAbility.setClickable(false);
         useAbility.setTextColor(Color.parseColor("#60C0C0C0"));
         useAbility.setBackgroundColor(Color.parseColor("#60C0C0C0"));
         final int boxNumber = boxNum;
-        if (boxCards[boxNumber].getAbility() == "Opponent discards 3 highest cards") {
+        if (boxCards[boxNumber].getAbility() == "Opponent discards 2 highest cards") {
             Intent intent = new Intent(this, ExplosiveActivity.class);
+            intent.putExtra("Message", "King of Hearts unleashed!");
             startActivity(intent);
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 public void run() {
-                    discard3highest(boxNumber);
+                    discardhighest(boxNumber,2);
+                }
+            }, 6000);
+        }
+        else if (boxCards[boxNumber].getAbility() == "Opponent discards 3 highest cards") {
+            Intent intent = new Intent(this, ExplosiveActivity.class);
+            intent.putExtra("Message", "King of Spades unleashed!");
+            startActivity(intent);
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    discardhighest(boxNumber,3);
                 }
             }, 6000);
         }
@@ -445,10 +487,16 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                         discard2(boxNumber);
                     }
                     else if (boxCards[boxNumber].getAbility() == "Draw 2 cards") {
-                        draw2(boxNumber);
+                        draw(boxNumber,2);
                     }
                     else if (boxCards[boxNumber].getAbility() == "Draw 3 cards") {
-                        draw3(boxNumber);
+                        draw(boxNumber,3);
+                    }
+                    else if (boxCards[boxNumber].getAbility() == "Deactivate opponent's cards") {
+                        deactivate(boxNumber);
+                    }
+                    else if (boxCards[boxNumber].getAbility() == "Swap your lowest card with opponent's highest card") {
+                        swap(boxNumber);
                     }
                 }
             }, 3000);
@@ -528,27 +576,83 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         computerMoves();
     }
 
-    private void draw2(int boxNumber) {
+    private void draw(int boxNumber, int howMany) {
         TextView tv = (TextView)findViewById(R.id.playerScore);
-        updateScore(-9, tv);
+        if (howMany == 2) {
+            updateScore(-9, tv);
+        }
+        else if (howMany == 3) {
+            updateScore(-10, tv);
+        }
         boxImages[boxNumber].setImageResource(R.drawable.empty);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
 
-        drawCard(2);
+        drawCard(howMany);
     }
 
-    private void draw3(int boxNumber) {
+    private void deactivate(int boxNumber) {
+        if (computerCards.size()>0) {
+            for (int i = 0; i < computerCards.size(); i++) {
+                computerCards.get(i).deactivate();
+            }
+        }
+
         TextView tv = (TextView)findViewById(R.id.playerScore);
-        updateScore(-10, tv);
+        updateScore(-11, tv);
         boxImages[boxNumber].setImageResource(R.drawable.empty);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
-
-        drawCard(3);
+        computerMoves();
     }
 
-    private void discard3highest(int boxNumber) {
+    private void swap(int boxNumber) {
+        TextView mytv = (TextView)findViewById(R.id.playerScore);
+        updateScore(-12, mytv);
+        boxImages[boxNumber].setImageResource(R.drawable.empty);
+        boxIsEmpty[boxNumber] = true;
+        boxCards[boxNumber] = null;
+        int myMin = 14;
+        int myIndex = 14;
+        for (int i = 0; i < boxCards.length; i++) {
+            if (!boxIsEmpty[i]) {
+                if (boxCards[i].getValue()<myMin) {
+                    myMin = boxCards[i].getValue();
+                    myIndex = i;
+                }
+            }
+        }
+        int hisMax = -1;
+        int hisIndex = -1;
+        if (computerCards.size()>0) {
+            for (int j = 0; j < computerCards.size(); j++) {
+                if (computerCards.get(j).getValue()>hisMax) {
+                    hisMax = computerCards.get(j).getValue();
+                    hisIndex = j;
+                }
+            }
+        }
+
+        if (myIndex != 14 && hisIndex != -1) {
+            Card hisCard = computerCards.get(hisIndex);
+            Card myCard = boxCards[myIndex];
+            computerCards.remove(hisIndex);
+            TextView histv = (TextView) findViewById(R.id.computerScore);
+            updateScore(-hisMax, histv);
+            updateScore(myMin, histv);
+            myCard.deactivate();
+            computerCards.add(myCard);
+
+            updateScore(hisMax, mytv);
+            updateScore(-myMin, mytv);
+            hisCard.deactivate();
+            boxImages[myIndex].setImageResource(hisCard.getImage());
+            boxCards[myIndex] = hisCard;
+        }
+        computerMoves();
+    }
+
+    private void discardhighest(int boxNumber, int howMany) {
         final ImageView blastPosition = (ImageView) findViewById(R.id.blastPosition);
         final AnimationDrawable a = (AnimationDrawable) blastPosition.getBackground();
         blastPosition.setVisibility(View.VISIBLE);
@@ -563,7 +667,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         Collections.sort(computerCards);
         int valueToDeduct;
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < howMany; i++) {
             if (computerCards.size()>0) {
                 valueToDeduct = computerCards.get(computerCards.size()-1).getValue();
                 computerCards.remove(computerCards.size()-1);
@@ -579,4 +683,234 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         boxCards[boxNumber] = null;
         computerMoves();
     }
+
+    /* -----------Methods for card abilities (Computer) ------------------------- */
+
+    private void computerExecuteAbility(int ind) {
+        final int index = ind;
+        final Card card = computerCards.get(index);
+        if (card.getAbility() == "Opponent discards 2 highest cards") {
+            Intent intent = new Intent(this, ExplosiveActivity.class);
+            intent.putExtra("Message", "King of Hearts unleashed!");
+            startActivity(intent);
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    computerdiscardhighest(index,2);
+                }
+            }, 6000);
+        }
+        else if (card.getAbility() == "Opponent discards 3 highest cards") {
+            Intent intent = new Intent(this, ExplosiveActivity.class);
+            intent.putExtra("Message", "King of Spades unleashed!");
+            startActivity(intent);
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    computerdiscardhighest(index,3);
+                }
+            }, 6000);
+        }
+        else {
+            final TextView abilityText = (TextView) findViewById(R.id.abilityText);
+            abilityText.setBackgroundColor(Color.BLACK);
+            abilityText.setText("COM used " + card.toString() + "!");
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    abilityText.setText(null);
+                    abilityText.setBackgroundColor(Color.TRANSPARENT);
+                    if (card.getAbility() == "Opponent discards 2 random cards") {
+                        computerdiscard2(index);
+                    }
+                    else if (card.getAbility() == "Draw 2 cards") {
+                        computerdraw(index,2);
+                    }
+                    else if (card.getAbility() == "Draw 3 cards") {
+                        computerdraw(index,3);
+                    }
+                    else if (card.getAbility() == "Deactivate opponent's cards") {
+                        computerdeactivate(index);
+                    }
+                    else if (card.getAbility() == "Swap your lowest card with opponent's highest card") {
+                        computerswap(index);
+                    }
+                }
+            }, 3000);
+        }
+    }
+
+    private void computerdiscard2(int index) {
+        computerCards.remove(index);
+        TextView tv = (TextView)findViewById(R.id.computerScore);
+        updateScore(-8, tv);
+        ArrayList<Integer> canBeDiscarded = new ArrayList<Integer>();
+        for (int i = 0; i < boxCards.length; i++) {
+            if (!boxIsEmpty[i]) {
+                canBeDiscarded.add(i);
+            }
+        }
+
+        if (canBeDiscarded.size() == 0) {
+            playerTurn();
+        }
+        else {
+            final ArrayList<Integer> toDiscardList = new ArrayList<Integer>();
+            int temp = random.nextInt(canBeDiscarded.size());
+            int toDiscard = canBeDiscarded.get(temp);
+            boxImages[toDiscard].setImageResource(R.drawable.blast);
+            final AnimationDrawable a = (AnimationDrawable) boxImages[toDiscard].getDrawable();
+            a.start();
+            int valueToDeduct = boxCards[toDiscard].getValue();
+            TextView mytv = (TextView) findViewById(R.id.playerScore);
+            updateScore(-valueToDeduct, mytv);
+            toDiscardList.add(toDiscard);
+            canBeDiscarded.remove(temp);
+            if (canBeDiscarded.size() > 0) {
+                temp = random.nextInt(canBeDiscarded.size());
+                toDiscard = canBeDiscarded.get(temp);
+                boxImages[toDiscard].setImageResource(R.drawable.blast);
+                AnimationDrawable b = (AnimationDrawable) boxImages[toDiscard].getDrawable();
+                b.start();
+                valueToDeduct = boxCards[toDiscard].getValue();
+                updateScore(-valueToDeduct, mytv);
+                toDiscardList.add(toDiscard);
+            }
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    for (int m = 0; m < toDiscardList.size(); m++) {
+                        boxImages[toDiscardList.get(m)].clearAnimation();
+                        boxImages[toDiscardList.get(m)].setImageResource(R.drawable.empty);
+                        boxIsEmpty[toDiscardList.get(m)] = true;
+                        boxCards[toDiscardList.get(m)] = null;
+                    }
+                    playerTurn();
+                }
+            }, 1000);
+        }
+    }
+
+    private void computerdraw(int index, int howMany) {
+        computerCards.remove(index);
+        TextView tv = (TextView)findViewById(R.id.computerScore);
+        if (howMany == 2) {
+            updateScore(-9, tv);
+        }
+        else if (howMany == 3) {
+            updateScore(-10, tv);
+        }
+
+        computerDrawCards(howMany);
+    }
+
+    private void computerdeactivate(int index) {
+        computerCards.remove(index);
+        TextView tv = (TextView)findViewById(R.id.computerScore);
+        updateScore(-11, tv);
+
+        for (int i = 0; i < boxCards.length; i++) {
+            boxCards[i].deactivate();
+        }
+        playerTurn();
+    }
+
+    private void computerswap(int index) {
+        computerCards.remove(index);
+        TextView histv = (TextView)findViewById(R.id.computerScore);
+        updateScore(-12, histv);
+        int myMax = -1;
+        int myIndex = -1;
+        for (int i = 0; i < boxCards.length; i++) {
+            if (!boxIsEmpty[i]) {
+                if (boxCards[i].getValue()>myMax) {
+                    myMax = boxCards[i].getValue();
+                    myIndex = i;
+                }
+            }
+        }
+        int hisMin = 14;
+        int hisIndex = 14;
+        if (computerCards.size()>0) {
+            for (int j = 0; j < computerCards.size(); j++) {
+                if (computerCards.get(j).getValue()<hisMin) {
+                    hisMin = computerCards.get(j).getValue();
+                    hisIndex = j;
+                }
+            }
+        }
+
+        if (myIndex != -1 && hisIndex != 14) {
+            Card hisCard = computerCards.get(hisIndex);
+            Card myCard = boxCards[myIndex];
+            computerCards.remove(hisIndex);
+            updateScore(-hisMin, histv);
+            updateScore(myMax, histv);
+            myCard.deactivate();
+            computerCards.add(myCard);
+
+            TextView mytv = (TextView)findViewById(R.id.playerScore);
+            updateScore(hisMin, mytv);
+            updateScore(-myMax, mytv);
+            hisCard.deactivate();
+            boxImages[myIndex].setImageResource(hisCard.getImage());
+            boxCards[myIndex] = hisCard;
+        }
+        playerTurn();
+    }
+
+    private void computerdiscardhighest(int index, int howMany) {
+        computerCards.remove(index);
+        TextView tv = (TextView)findViewById(R.id.computerScore);
+        updateScore(-13, tv);
+        ArrayList<Card> allCards = new ArrayList<Card>();
+        for (int i = 0; i < boxCards.length; i++) {
+            if (!boxIsEmpty[i]) {
+                allCards.add(boxCards[i]);
+            }
+        }
+        Collections.sort(allCards);
+
+        if (allCards.size() == 0) {
+            playerTurn();
+        }
+        else{
+            final ArrayList<Integer> toDiscardList = new ArrayList<Integer>();
+            for (int j = 0; j < howMany; j++) {
+                if (allCards.size() > 0) {
+                    int temp = -1;
+                    for (int k = 0; k < boxCards.length; k++) {
+                        if (!boxIsEmpty[k]) {
+                            if (boxCards[k].getRank()==allCards.get(allCards.size()-1).getRank()) {
+                                temp = k;
+                            }
+                        }
+                    }
+                    int toDiscard = temp;
+                    boxImages[toDiscard].setImageResource(R.drawable.blast);
+                    AnimationDrawable a = (AnimationDrawable) boxImages[toDiscard].getDrawable();
+                    a.start();
+                    int valueToDeduct = boxCards[toDiscard].getValue();
+                    TextView mytv = (TextView) findViewById(R.id.playerScore);
+                    updateScore(-valueToDeduct, mytv);
+                    toDiscardList.add(toDiscard);
+                    allCards.remove(allCards.size()-1);
+                }
+            }
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    for (int m = 0; m < toDiscardList.size(); m++) {
+                        boxImages[toDiscardList.get(m)].clearAnimation();
+                        boxImages[toDiscardList.get(m)].setImageResource(R.drawable.empty);
+                        boxIsEmpty[toDiscardList.get(m)] = true;
+                        boxCards[toDiscardList.get(m)] = null;
+                    }
+                    playerTurn();
+                }
+            }, 1000);
+        }
+
+    }
+
 }

@@ -25,7 +25,6 @@
         android:textStyle="italic|bold"
         android:textColor="#FFFF00"
         android:textSize="5dp"
-        android:text="@string/king_of_spades_is_unleashed"
         android:textAlignment="center"
         android:id="@+id/explosiveText"
         android:layout_centerHorizontal="true"

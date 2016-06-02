@@ -28,6 +28,15 @@ public class Card implements Comparable<Card> {
         else if (value==35||value==48){
             m_ability = "Draw 3 cards";
         }
+        else if (value==36||value==49) {
+            m_ability = "Deactivate opponent's cards";
+        }
+        else if (value==37||value==50) {
+            m_ability = "Swap your lowest card with opponent's highest card";
+        }
+        else if (value==38) {
+            m_ability = "Opponent discards 2 highest cards";
+    }
         else if (value==51) {
             m_ability = "Opponent discards 3 highest cards";
         }
@@ -98,6 +107,8 @@ public class Card implements Comparable<Card> {
     public CharSequence getAbility() {
         return m_ability;
     }
+
+    public void deactivate() {m_ability = "None";}
 
     private String getSuitText()
     {

@@ -24,6 +24,7 @@ public class ExplosiveActivity extends AppCompatActivity {
 
         Animation a = AnimationUtils.loadAnimation(this, R.anim.scale);
         TextView tv = (TextView) findViewById(R.id.explosiveText);
+        tv.setText(getIntent().getCharSequenceExtra("Message"));
         tv.startAnimation(a);
 
         Handler handler = new Handler();

@@ -5,7 +5,7 @@
     <string name="start_game">Start Game</string>
     <string name="your_score">You</string>
     <string name="_0">0</string>
-    <string name="computer_score">Computer</string>
+    <string name="computer_score">COM</string>
     <string name="choose_one_to_discard">You have the maximum number of cards. Choose one to discard.</string>
     <string name="use_ability">Use Ability</string>
     <string name="king_of_spades_is_unleashed">King of Spades unleashed!</string>
