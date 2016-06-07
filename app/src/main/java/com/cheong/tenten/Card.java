@@ -8,16 +8,17 @@ import android.os.Parcelable;
  */
 public class Card implements Comparable<Card> {
 
-    private boolean faceup;
     private int m_value;
     private CharSequence m_ability;
 
     public Card(int value)
     {
         m_value = value;
-        faceup = false;
-        if (value==0||value==13||value==26||value==39) {
-            m_ability = "View opponent's hand";
+        if (value==0||value==13||value==26) {
+            m_ability = "Deactivate opponent's cards";
+        }
+        else if (value==39) {
+            m_ability = "Restoration: Highest hand wins";
         }
         else if (value==33||value==46) {
             m_ability = "Opponent discards 2 random cards";
@@ -29,16 +30,16 @@ public class Card implements Comparable<Card> {
             m_ability = "Draw 3 cards";
         }
         else if (value==36||value==49) {
-            m_ability = "Deactivate opponent's cards";
+            m_ability = "Opponent discards 2 highest cards";
         }
         else if (value==37||value==50) {
-            m_ability = "Swap your lowest card with opponent's highest card";
+            m_ability = "Opponent discards 3 highest cards";
         }
         else if (value==38) {
-            m_ability = "Opponent discards 2 highest cards";
+            m_ability = "Sudden death: Game ends next round";
     }
         else if (value==51) {
-            m_ability = "Opponent discards 3 highest cards";
+            m_ability = "Sabotage: Lowest hand wins";
         }
         else {
             m_ability = "None";
@@ -203,14 +204,6 @@ public class Card implements Comparable<Card> {
     @Override
     public String toString() {
         return getValueText() + " of " + getSuitText();
-    }
-
-    public boolean isFaceUp() {
-        return faceup;
-    }
-
-    public void flip() {
-        faceup = !faceup;
     }
 
     public int getImage() {

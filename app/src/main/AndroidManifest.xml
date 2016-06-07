@@ -19,7 +19,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".GameActivity" />
-        <activity android:name=".ExplosiveActivity"></activity>
+        <activity android:name=".ExplosiveActivity" />
+        <activity android:name=".numPlayersActivity" />
+        <activity android:name=".GameActivity4P"></activity>
     </application>
 
 </manifest>
