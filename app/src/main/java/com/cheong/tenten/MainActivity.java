@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void playGame(View view) {
-        Intent intent = new Intent(this, GameActivity.class);
+        Intent intent = new Intent(this, numPlayersActivity.class);
         startActivity(intent);
     }
 }

@@ -9,4 +9,7 @@
     <string name="choose_one_to_discard">You have the maximum number of cards. Choose one to discard.</string>
     <string name="use_ability">Use Ability</string>
     <string name="king_of_spades_is_unleashed">King of Spades unleashed!</string>
+    <string name="com_2">COM 2</string>
+    <string name="com_1">COM 1</string>
+    <string name="com_3">COM 3</string>
 </resources>

@@ -34,24 +34,6 @@
         android:layout_centerHorizontal="true"
         />
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/glitterFrame"
-        android:layout_toRightOf="@+id/computerScoreStaticText"
-        android:layout_marginTop="42dp"
-        android:padding="5dp"
-        android:src="@drawable/empty"/>
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/highestCardImage"
-        android:layout_toRightOf="@+id/computerScoreStaticText"
-        android:layout_marginTop="42dp"
-        android:padding="5dp"
-        android:src="@drawable/empty"/>
-
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

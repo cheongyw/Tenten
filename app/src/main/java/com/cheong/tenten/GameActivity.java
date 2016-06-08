@@ -584,7 +584,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         final int boxNumber = boxNum;
         if (boxCards[boxNumber].getAbility() == "Restoration: Highest hand wins") {
             Intent intent = new Intent(this, ExplosiveActivity.class);
-            intent.putExtra("Message", "Restoration: Highest hand wins");
+            intent.putExtra("Message", "Restoration!");
             startActivity(intent);
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
@@ -595,7 +595,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if (boxCards[boxNumber].getAbility() == "Sudden death: Game ends next round") {
             Intent intent = new Intent(this, ExplosiveActivity.class);
-            intent.putExtra("Message", "Sudden death: Game ends next round");
+            intent.putExtra("Message", "Sudden death");
             startActivity(intent);
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
@@ -606,7 +606,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if (boxCards[boxNumber].getAbility() == "Sabotage: Lowest hand wins") {
             Intent intent = new Intent(this, ExplosiveActivity.class);
-            intent.putExtra("Message", "Sabotage: Lowest hand wins");
+            intent.putExtra("Message", "Sabotage!");
             startActivity(intent);
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
@@ -839,7 +839,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         final Card card = computerCards.get(index);
         if (card.getAbility() == "Restoration: Highest hand wins") {
             Intent intent = new Intent(this, ExplosiveActivity.class);
-            intent.putExtra("Message", "Restoration: Highest hand wins");
+            intent.putExtra("Message", "Restoration!");
             startActivity(intent);
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
@@ -850,7 +850,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if (card.getAbility() == "Sudden death: Game ends next round") {
             Intent intent = new Intent(this, ExplosiveActivity.class);
-            intent.putExtra("Message", "Sudden death: Game ends next round");
+            intent.putExtra("Message", "Sudden death");
             startActivity(intent);
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
@@ -861,7 +861,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if (card.getAbility() == "Sabotage: Lowest hand wins") {
             Intent intent = new Intent(this, ExplosiveActivity.class);
-            intent.putExtra("Message", "Sabotage: Lowest hand wins");
+            intent.putExtra("Message", "Sabotage!");
             startActivity(intent);
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
