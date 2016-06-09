@@ -9,8 +9,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -19,9 +17,10 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.Random;
 
-public class GameActivity extends AppCompatActivity implements View.OnClickListener {
+public class GameActivity4P extends AppCompatActivity implements View.OnClickListener {
 
     // UI components
     private Button useAbility;
@@ -35,7 +34,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView[] boxImages;
     private boolean[] boxIsEmpty;
     private Card[] boxCards;
-    private ArrayList<Card> computerCards;
+    private ArrayList<Card> com1_Cards;
+    private ArrayList<Card> com2_Cards;
+    private ArrayList<Card> com3_Cards;
+    private ArrayList<Card>[] comCards;
     private boolean suddendeathMode;
     private int suddendeathCount;
     private int winCondition;
@@ -48,16 +50,16 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game);
+        setContentView(R.layout.activity_game_4p);
 
-        useAbility = (Button) findViewById(R.id.useAbility);
-        drawButton = (ImageButton) findViewById(R.id.drawButton);
-        boxImage0 = (ImageView) findViewById(R.id.boxImage0);
-        boxImage1 = (ImageView) findViewById(R.id.boxImage1);
-        boxImage2 = (ImageView) findViewById(R.id.boxImage2);
-        boxImage3 = (ImageView) findViewById(R.id.boxImage3);
-        boxImage4 = (ImageView) findViewById(R.id.boxImage4);
-        boxImage5 = (ImageView) findViewById(R.id.boxImage5);
+        useAbility = (Button) findViewById(R.id.useAbility4P);
+        drawButton = (ImageButton) findViewById(R.id.drawButton4P);
+        boxImage0 = (ImageView) findViewById(R.id.boxImage0_4P);
+        boxImage1 = (ImageView) findViewById(R.id.boxImage1_4P);
+        boxImage2 = (ImageView) findViewById(R.id.boxImage2_4P);
+        boxImage3 = (ImageView) findViewById(R.id.boxImage3_4P);
+        boxImage4 = (ImageView) findViewById(R.id.boxImage4_4P);
+        boxImage5 = (ImageView) findViewById(R.id.boxImage5_4P);
 
         boxImages = new ImageView[]{boxImage0, boxImage1, boxImage2, boxImage3, boxImage4, boxImage5};
         boxIsEmpty = new boolean[6];
@@ -69,12 +71,18 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     drawCard(1);
                 }
             }
-            });
+        });
         useAbility.setOnClickListener(this);
-        computerCards = new ArrayList<Card>();
+        com1_Cards = new ArrayList<>();
+        com2_Cards = new ArrayList<>();
+        com3_Cards = new ArrayList<>();
+        comCards = new ArrayList[3];
+        comCards[0] = com1_Cards;
+        comCards[1] = com2_Cards;
+        comCards[2] = com3_Cards;
         drawnCards = new ArrayList<Integer>();
         suddendeathMode = false;
-        suddendeathCount = 2;
+        suddendeathCount = 4;
         winCondition = 0;
         gameEnded = false;
 
@@ -91,11 +99,34 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             boxImages[j].setImageResource(card.getImage());
             boxIsEmpty[j] = false;
             boxCards[j] = card;
-            TextView tv = (TextView)findViewById(R.id.playerScore);
+            TextView tv = (TextView)findViewById(R.id.playerScore4P);
             updateScore(card.getValue(), tv);
             drawnCards.add(value);
         }
-        computerDrawCards(4);
+        for (int which = 0; which < 3; which++) {
+            for (int k = 0; k < 4; k++) {
+                int value = random.nextInt(52);
+                while (drawnCards.contains(value)) {
+                    value = random.nextInt(52);
+                }
+                Card card = new Card(value);
+                ArrayList<Card> computerCards = comCards[which];
+                computerCards.add(card);
+                TextView tv;
+                if (which == 0) {
+                    tv = (TextView) findViewById(R.id.com1Score);
+                }
+                else if (which == 1) {
+                    tv = (TextView) findViewById(R.id.com2Score);
+                }
+                else {
+                    tv = (TextView) findViewById(R.id.com3Score);
+                }
+                updateScore(card.getValue(), tv);
+                drawnCards.add(value);
+            }
+        }
+        playerTurn();
     }
 
     @Override
@@ -119,7 +150,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         chooseAbility.setItems(options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-                TextView showMessage = (TextView)findViewById(R.id.showMessage);
+                TextView showMessage = (TextView)findViewById(R.id.showMessage4P);
                 showMessage.setText(null);
                 drawButton.setClickable(false);
                 executeAbility(temp2.get(id));
@@ -130,7 +161,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void drawCard(int howMany) {
-        TextView showMessage = (TextView)findViewById(R.id.showMessage);
+        TextView showMessage = (TextView)findViewById(R.id.showMessage4P);
         showMessage.setText(null);
         // Draw a card from the deckPile
         int value = random.nextInt(52);
@@ -143,7 +174,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             boxImage0.setImageResource(card.getImage());
             boxIsEmpty[0] = false;
             boxCards[0] = card;
-            TextView tv = (TextView)findViewById(R.id.playerScore);
+            TextView tv = (TextView)findViewById(R.id.playerScore4P);
             updateScore(card.getValue(), tv);
             drawnCards.add(value);
             if (drawnCards.size()==52) {
@@ -159,10 +190,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     else if (suddendeathMode) {
                         suddendeathCount--;
-                        computerMoves();
+                        computerMoves(0);
                     }
                     else {
-                        computerMoves();
+                        computerMoves(0);
                     }
                 }
             }
@@ -171,7 +202,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             boxImage1.setImageResource(card.getImage());
             boxIsEmpty[1] = false;
             boxCards[1] = card;
-            TextView tv = (TextView)findViewById(R.id.playerScore);
+            TextView tv = (TextView)findViewById(R.id.playerScore4P);
             updateScore(card.getValue(), tv);
             drawnCards.add(value);
             if (drawnCards.size()==52) {
@@ -187,10 +218,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     else if (suddendeathMode) {
                         suddendeathCount--;
-                        computerMoves();
+                        computerMoves(0);
                     }
                     else {
-                        computerMoves();
+                        computerMoves(0);
                     }
                 }
             }
@@ -199,7 +230,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             boxImage2.setImageResource(card.getImage());
             boxIsEmpty[2] = false;
             boxCards[2] = card;
-            TextView tv = (TextView)findViewById(R.id.playerScore);
+            TextView tv = (TextView)findViewById(R.id.playerScore4P);
             updateScore(card.getValue(), tv);
             drawnCards.add(value);
             if (drawnCards.size()==52) {
@@ -215,10 +246,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     else if (suddendeathMode) {
                         suddendeathCount--;
-                        computerMoves();
+                        computerMoves(0);
                     }
                     else {
-                        computerMoves();
+                        computerMoves(0);
                     }
                 }
             }
@@ -227,7 +258,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             boxImage3.setImageResource(card.getImage());
             boxIsEmpty[3] = false;
             boxCards[3] = card;
-            TextView tv = (TextView)findViewById(R.id.playerScore);
+            TextView tv = (TextView)findViewById(R.id.playerScore4P);
             updateScore(card.getValue(), tv);
             drawnCards.add(value);
             if (drawnCards.size()==52) {
@@ -243,10 +274,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     else if (suddendeathMode) {
                         suddendeathCount--;
-                        computerMoves();
+                        computerMoves(0);
                     }
                     else {
-                        computerMoves();
+                        computerMoves(0);
                     }
                 }
             }
@@ -255,7 +286,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             boxImage4.setImageResource(card.getImage());
             boxIsEmpty[4] = false;
             boxCards[4] = card;
-            TextView tv = (TextView)findViewById(R.id.playerScore);
+            TextView tv = (TextView)findViewById(R.id.playerScore4P);
             updateScore(card.getValue(), tv);
             drawnCards.add(value);
             if (drawnCards.size()==52) {
@@ -271,10 +302,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     else if (suddendeathMode) {
                         suddendeathCount--;
-                        computerMoves();
+                        computerMoves(0);
                     }
                     else {
-                        computerMoves();
+                        computerMoves(0);
                     }
                 }
             }
@@ -283,7 +314,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             boxImage5.setImageResource(card.getImage());
             boxIsEmpty[5] = false;
             boxCards[5] = card;
-            TextView tv = (TextView)findViewById(R.id.playerScore);
+            TextView tv = (TextView)findViewById(R.id.playerScore4P);
             updateScore(card.getValue(), tv);
             drawnCards.add(value);
             if (drawnCards.size()==52) {
@@ -300,10 +331,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     else if (suddendeathMode) {
                         suddendeathCount--;
-                        computerMoves();
+                        computerMoves(0);
                     }
                     else {
-                        computerMoves();
+                        computerMoves(0);
                     }
                 }
             }
@@ -325,11 +356,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         useAbility.setClickable(false);
         useAbility.setTextColor(Color.parseColor("#60C0C0C0"));
         useAbility.setBackgroundColor(Color.parseColor("#60C0C0C0"));
-        final TextView showMessage = (TextView)findViewById(R.id.showMessage);
+        final TextView showMessage = (TextView)findViewById(R.id.showMessage4P);
         showMessage.setText("You have the maximum number of cards. Choose one to discard.");
-        final ImageView drawnCardImage = (ImageView)findViewById(R.id.drawnCardImage);
+        final ImageView drawnCardImage = (ImageView)findViewById(R.id.drawnCardImage4P);
         drawnCardImage.setImageResource(c.getImage());
-        final TextView tv = (TextView)findViewById(R.id.playerScore);
+        final TextView tv = (TextView)findViewById(R.id.playerScore4P);
         final Card card = c;
         final int value = v;
         final int howMany = m;
@@ -359,10 +390,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                         }
                         else if (suddendeathMode) {
                             suddendeathCount--;
-                            computerMoves();
+                            computerMoves(0);
                         }
                         else {
-                            computerMoves();
+                            computerMoves(0);
                         }
                     }
                 }
@@ -400,28 +431,31 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                             }
                             else if (suddendeathMode) {
                                 suddendeathCount--;
-                                computerMoves();
+                                computerMoves(0);
                             }
                             else {
-                                computerMoves();
+                                computerMoves(0);
                             }
                         }
                     }
                 }
-                });
+            });
         }
     }
 
-    private void computerMoves() {
+    private void computerMoves(int w) {
         drawButton.setClickable(false);
         useAbility.setClickable(false);
         useAbility.setTextColor(Color.parseColor("#60C0C0C0"));
         useAbility.setBackgroundColor(Color.parseColor("#60C0C0C0"));
+        final int which = w;
 
         boolean hasAbilityTemp = false;
         boolean hasAbilityForSabotageTemp = false;
         int indexTemp = -1;
         int indexForSabotageTemp = -1;
+        ArrayList<Card> computerCards = comCards[which];
+
         if (computerCards.size() > 0) {
             for (int k = 0; k < computerCards.size(); k++) {
                 CharSequence ability = computerCards.get(k).getAbility();
@@ -440,36 +474,54 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         final boolean hasAbilityForSabotage = hasAbilityForSabotageTemp;
         final int index = indexTemp;
         final int indexForSabotage = indexForSabotageTemp;
-        final TextView showMessage = (TextView) findViewById(R.id.showMessage);
-        showMessage.setText("COM's turn");
+        final TextView showMessage = (TextView) findViewById(R.id.showMessage4P);
+        if (which == 0) {
+            showMessage.setText("COM 1's turn");
+        }
+        else if (which == 1) {
+            showMessage.setText("COM 2's turn");
+        }
+        else {
+            showMessage.setText("COM 3's turn");
+        }
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
                 showMessage.setText(null);
                 if (winCondition == 0 && hasAbility) {
-                    computerExecuteAbility(index);
+                    computerExecuteAbility(index, which);
                 }
                 else if (winCondition == 1 && hasAbilityForSabotage) {
-                    computerExecuteAbility(indexForSabotage);
+                    computerExecuteAbility(indexForSabotage, which);
                 }
                 else {
-                    computerDrawCards(1);
+                    computerDrawCards(1, which);
                 }
             }
         }, 2000);
     }
 
-    private void computerDrawCards(int howMany) {
+    private void computerDrawCards(int howMany, int which) {
         int value = random.nextInt(52);
         while (drawnCards.contains(value)) {
             value = random.nextInt(52);
         }
         Card card = new Card(value);
+        ArrayList<Card> computerCards = comCards[which];
         if (computerCards.size() == 6) {
-            replaceComputerCard(card);
+            replaceComputerCard(card, which);
         }else{
             computerCards.add(card);
-            TextView tv = (TextView) findViewById(R.id.computerScore);
+            TextView tv;
+            if (which == 0) {
+                 tv = (TextView) findViewById(R.id.com1Score);
+            }
+            else if (which == 1) {
+                tv = (TextView) findViewById(R.id.com2Score);
+            }
+            else {
+                tv = (TextView) findViewById(R.id.com3Score);
+            }
             updateScore(card.getValue(), tv);
         }
         drawnCards.add(value);
@@ -479,25 +531,30 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         else {
             if (howMany != 1) {
                 howMany--;
-                computerDrawCards(howMany);
+                computerDrawCards(howMany, which);
             }
             else {
                 if (suddendeathCount == 0) {
                     endGame();
                 }
-                else if (suddendeathMode) {
-                    suddendeathCount--;
-                    playerTurn();
-                }
                 else {
-                    playerTurn();
+                    if (suddendeathMode) {
+                        suddendeathCount--;
+                    }
+                    if (which == 2) {
+                        playerTurn();
+                    }
+                    else {
+                        which++;
+                        computerMoves(which);
+                    }
                 }
             }
         }
     }
 
     private void playerTurn() {
-        TextView showMessage = (TextView)findViewById(R.id.showMessage);
+        TextView showMessage = (TextView)findViewById(R.id.showMessage4P);
         showMessage.setText("It's your turn. Draw a card or use an ability.");
         drawButton.setClickable(true);
         useAbility.setClickable(false);
@@ -514,9 +571,20 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void replaceComputerCard(Card card) {
+    private void replaceComputerCard(Card card, int which) {
         int k = card.getValue();
         int index = -1;
+        ArrayList<Card> computerCards = comCards[which];
+        TextView tv;
+        if (which == 0) {
+            tv = (TextView) findViewById(R.id.com1Score);
+        }
+        else if (which == 1) {
+            tv = (TextView) findViewById(R.id.com2Score);
+        }
+        else {
+            tv = (TextView) findViewById(R.id.com3Score);
+        }
         if (winCondition == 0) {
             int min = k;
             for (int i = 0; i<computerCards.size(); i++) {
@@ -527,7 +595,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             }
             if (index!=-1) {
                 computerCards.remove(index);
-                TextView tv = (TextView) findViewById(R.id.computerScore);
                 updateScore(-min, tv);
                 updateScore(k, tv);
                 computerCards.add(card);
@@ -543,7 +610,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             }
             if (index!=-1) {
                 computerCards.remove(index);
-                TextView tv = (TextView) findViewById(R.id.computerScore);
                 updateScore(-max, tv);
                 updateScore(k, tv);
                 computerCards.add(card);
@@ -556,32 +622,39 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         drawButton.setImageResource(R.drawable.empty);
         drawButton.setClickable(false);
         useAbility.setClickable(false);
-        TextView playertv = (TextView)findViewById(R.id.playerScore);
+        TextView playertv = (TextView)findViewById(R.id.playerScore4P);
         int playerScore = Integer.parseInt(playertv.getText().toString());
-        TextView comptv = (TextView)findViewById(R.id.computerScore);
-        int compScore = Integer.parseInt(comptv.getText().toString());
+        TextView com1_tv = (TextView)findViewById(R.id.com1Score);
+        int com1_Score = Integer.parseInt(com1_tv.getText().toString());
+        TextView com2_tv = (TextView)findViewById(R.id.com2Score);
+        int com2_Score = Integer.parseInt(com2_tv.getText().toString());
+        TextView com3_tv = (TextView)findViewById(R.id.com3Score);
+        int com3_Score = Integer.parseInt(com3_tv.getText().toString());
+        Hashtable<Integer, String> table = new Hashtable<>();
+        table.put(com1_Score,"COM 1");table.put(com2_Score,"COM 2");table.put(com3_Score,"COM 3");table.put(playerScore,"You");
+        ArrayList<Integer> temp = new ArrayList<>();
+        temp.add(com1_Score);temp.add(com2_Score);temp.add(com3_Score);temp.add(playerScore);
+        Collections.sort(temp);
         AlertDialog.Builder outcome = new AlertDialog.Builder(this);
         if (winCondition == 0) {
-            if (playerScore > compScore) {
-                outcome.setMessage("You win!");
-            }
-            else if (playerScore == compScore) {
-                outcome.setMessage("It's a tie!");
+            if (table.get(temp.get(3))=="You") {
+                outcome.setTitle("You win!");
             }
             else {
-                outcome.setMessage("You lose!");
+                outcome.setTitle("You lose!");
             }
+            String message = table.get(temp.get(3))+"\n"+"\n"+table.get(temp.get(2))+"\n"+"\n"+table.get(temp.get(1))+"\n"+"\n"+table.get(temp.get(0));
+            outcome.setMessage(message);
         }
         else if (winCondition == 1) {
-            if (playerScore < compScore) {
-                outcome.setMessage("You win!");
-            }
-            else if (playerScore == compScore) {
-                outcome.setMessage("It's a tie!");
+            if (table.get(temp.get(0))=="You") {
+                outcome.setTitle("You win!");
             }
             else {
-                outcome.setMessage("You lose!");
+                outcome.setTitle("You lose!");
             }
+            String message = table.get(temp.get(0))+"\n"+"\n"+table.get(temp.get(1))+"\n"+"\n"+table.get(temp.get(2))+"\n"+"\n"+table.get(temp.get(3));
+            outcome.setMessage(message);
         }
         outcome.setCancelable(true);
         outcome.show();
@@ -628,7 +701,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             }, 6000);
         }
         else {
-            final TextView showMessage = (TextView) findViewById(R.id.showMessage);
+            final TextView showMessage = (TextView) findViewById(R.id.showMessage4P);
             showMessage.setText("You used " + boxCards[boxNumber].toString() + "!");
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
@@ -658,33 +731,57 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void discard2(int boxNumber) {
-        final ImageView blastPosition = (ImageView) findViewById(R.id.blastPosition);
-        final AnimationDrawable a = (AnimationDrawable) blastPosition.getBackground();
-        blastPosition.setVisibility(View.VISIBLE);
+        final ImageView blast1 = (ImageView) findViewById(R.id.blastCom1);
+        final ImageView blast2 = (ImageView) findViewById(R.id.blastCom2);
+        final ImageView blast3 = (ImageView) findViewById(R.id.blastCom3);
+        final AnimationDrawable a = (AnimationDrawable) blast1.getBackground();
+        final AnimationDrawable b = (AnimationDrawable) blast2.getBackground();
+        final AnimationDrawable c = (AnimationDrawable) blast3.getBackground();
+        blast1.setVisibility(View.VISIBLE);
+        blast2.setVisibility(View.VISIBLE);
+        blast3.setVisibility(View.VISIBLE);
         a.start();
+        b.start();
+        c.start();
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                blastPosition.clearAnimation();
-                blastPosition.setVisibility(View.INVISIBLE);
+                blast1.clearAnimation();
+                blast2.clearAnimation();
+                blast3.clearAnimation();
+                blast1.setVisibility(View.INVISIBLE);
+                blast2.setVisibility(View.INVISIBLE);
+                blast3.setVisibility(View.INVISIBLE);
             }
         }, 1000);
 
-        if (computerCards.size()>0) {
-            int index = random.nextInt(computerCards.size());
-            int valueToDeduct = computerCards.get(index).getValue();
-            computerCards.remove(index);
-            TextView tv = (TextView) findViewById(R.id.computerScore);
-            updateScore(-valueToDeduct, tv);
+        for (int which = 0; which < 3; which++) {
+            ArrayList<Card> computerCards = comCards[which];
+            TextView tv;
+            if (which == 0) {
+                tv = (TextView) findViewById(R.id.com1Score);
+            }
+            else if (which == 1) {
+                tv = (TextView) findViewById(R.id.com2Score);
+            }
+            else {
+                tv = (TextView) findViewById(R.id.com3Score);
+            }
             if (computerCards.size()>0) {
-                index = random.nextInt(computerCards.size());
-                valueToDeduct = computerCards.get(index).getValue();
+                int index = random.nextInt(computerCards.size());
+                int valueToDeduct = computerCards.get(index).getValue();
                 computerCards.remove(index);
                 updateScore(-valueToDeduct, tv);
+                if (computerCards.size()>0) {
+                    index = random.nextInt(computerCards.size());
+                    valueToDeduct = computerCards.get(index).getValue();
+                    computerCards.remove(index);
+                    updateScore(-valueToDeduct, tv);
+                }
             }
         }
 
-        TextView tv = (TextView)findViewById(R.id.playerScore);
+        TextView tv = (TextView)findViewById(R.id.playerScore4P);
         updateScore(-8, tv);
         boxImages[boxNumber].setImageResource(R.drawable.empty);
         boxIsEmpty[boxNumber] = true;
@@ -694,15 +791,15 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if (suddendeathMode) {
             suddendeathCount--;
-            computerMoves();
+            computerMoves(0);
         }
         else {
-            computerMoves();
+            computerMoves(0);
         }
     }
 
     private void draw(int boxNumber, int howMany) {
-        TextView tv = (TextView)findViewById(R.id.playerScore);
+        TextView tv = (TextView)findViewById(R.id.playerScore4P);
         if (howMany == 2) {
             updateScore(-9, tv);
         }
@@ -717,13 +814,16 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void deactivate(int boxNumber) {
-        if (computerCards.size()>0) {
-            for (int i = 0; i < computerCards.size(); i++) {
-                computerCards.get(i).deactivate();
+        for (int which = 0; which < 3; which++) {
+            ArrayList<Card> computerCards = comCards[which];
+            if (computerCards.size()>0) {
+                for (int i = 0; i < computerCards.size(); i++) {
+                    computerCards.get(i).deactivate();
+                }
             }
         }
 
-        TextView tv = (TextView)findViewById(R.id.playerScore);
+        TextView tv = (TextView)findViewById(R.id.playerScore4P);
         updateScore(-1, tv);
         boxImages[boxNumber].setImageResource(R.drawable.empty);
         boxIsEmpty[boxNumber] = true;
@@ -733,43 +833,65 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if (suddendeathMode) {
             suddendeathCount--;
-            computerMoves();
+            computerMoves(0);
         }
         else {
-            computerMoves();
+            computerMoves(0);
         }
     }
 
     private void discardhighest(int boxNumber, int howMany) {
-        final ImageView blastPosition = (ImageView) findViewById(R.id.blastPosition);
-        final AnimationDrawable a = (AnimationDrawable) blastPosition.getBackground();
-        blastPosition.setVisibility(View.VISIBLE);
+        final ImageView blast1 = (ImageView) findViewById(R.id.blastCom1);
+        final ImageView blast2 = (ImageView) findViewById(R.id.blastCom2);
+        final ImageView blast3 = (ImageView) findViewById(R.id.blastCom3);
+        final AnimationDrawable a = (AnimationDrawable) blast1.getBackground();
+        final AnimationDrawable b = (AnimationDrawable) blast2.getBackground();
+        final AnimationDrawable c = (AnimationDrawable) blast3.getBackground();
+        blast1.setVisibility(View.VISIBLE);
+        blast2.setVisibility(View.VISIBLE);
+        blast3.setVisibility(View.VISIBLE);
         a.start();
+        b.start();
+        c.start();
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
-                blastPosition.clearAnimation();
-                blastPosition.setVisibility(View.INVISIBLE);
+                blast1.clearAnimation();
+                blast2.clearAnimation();
+                blast3.clearAnimation();
+                blast1.setVisibility(View.INVISIBLE);
+                blast2.setVisibility(View.INVISIBLE);
+                blast3.setVisibility(View.INVISIBLE);
             }
         }, 1000);
 
-        Collections.sort(computerCards);
-        int valueToDeduct;
-        for (int i = 0; i < howMany; i++) {
-            if (computerCards.size()>0) {
-                valueToDeduct = computerCards.get(computerCards.size()-1).getValue();
-                computerCards.remove(computerCards.size()-1);
-                TextView tv = (TextView) findViewById(R.id.computerScore);
-                updateScore(-valueToDeduct, tv);
+        for (int which = 0; which < 3; which++) {
+            ArrayList<Card> computerCards = comCards[which];
+            TextView tv;
+            if (which == 0) {
+                tv = (TextView) findViewById(R.id.com1Score);
+            } else if (which == 1) {
+                tv = (TextView) findViewById(R.id.com2Score);
+            } else {
+                tv = (TextView) findViewById(R.id.com3Score);
+            }
+            Collections.sort(computerCards);
+            int valueToDeduct;
+            for (int i = 0; i < howMany; i++) {
+                if (computerCards.size()>0) {
+                    valueToDeduct = computerCards.get(computerCards.size()-1).getValue();
+                    computerCards.remove(computerCards.size()-1);
+                    updateScore(-valueToDeduct, tv);
+                }
             }
         }
 
-        TextView tv = (TextView)findViewById(R.id.playerScore);
+        TextView mytv = (TextView)findViewById(R.id.playerScore4P);
         if (howMany == 2) {
-            updateScore(-11, tv);
+            updateScore(-11, mytv);
         }
         else if (howMany == 3) {
-            updateScore(-12, tv);
+            updateScore(-12, mytv);
         }
         boxImages[boxNumber].setImageResource(R.drawable.empty);
         boxIsEmpty[boxNumber] = true;
@@ -779,19 +901,19 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if (suddendeathMode) {
             suddendeathCount--;
-            computerMoves();
+            computerMoves(0);
         }
         else {
-            computerMoves();
+            computerMoves(0);
         }
     }
 
     private void restoration(int boxNumber) {
-        RelativeLayout layout = (RelativeLayout) findViewById(R.id.gamelayout);
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.gamelayout4P);
         layout.setBackgroundColor(Color.RED);
         winCondition = 0;
 
-        TextView tv = (TextView)findViewById(R.id.playerScore);
+        TextView tv = (TextView)findViewById(R.id.playerScore4P);
         updateScore(-1, tv);
         boxImages[boxNumber].setImageResource(R.drawable.empty);
         boxIsEmpty[boxNumber] = true;
@@ -801,10 +923,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if (suddendeathMode) {
             suddendeathCount--;
-            computerMoves();
+            computerMoves(0);
         }
         else {
-            computerMoves();
+            computerMoves(0);
         }
     }
 
@@ -812,20 +934,20 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         suddendeathMode = true;
         suddendeathCount--;
 
-        TextView tv = (TextView)findViewById(R.id.playerScore);
+        TextView tv = (TextView)findViewById(R.id.playerScore4P);
         updateScore(-13, tv);
         boxImages[boxNumber].setImageResource(R.drawable.empty);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
-        computerMoves();
+        computerMoves(0);
     }
 
     private void sabotage(int boxNumber) {
-        RelativeLayout layout = (RelativeLayout) findViewById(R.id.gamelayout);
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.gamelayout4P);
         layout.setBackgroundColor(Color.BLACK);
         winCondition = 1;
 
-        TextView tv = (TextView)findViewById(R.id.playerScore);
+        TextView tv = (TextView)findViewById(R.id.playerScore4P);
         updateScore(-13, tv);
         boxImages[boxNumber].setImageResource(R.drawable.empty);
         boxIsEmpty[boxNumber] = true;
@@ -835,17 +957,19 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if (suddendeathMode) {
             suddendeathCount--;
-            computerMoves();
+            computerMoves(0);
         }
         else {
-            computerMoves();
+            computerMoves(0);
         }
     }
 
     /* -----------Methods for card abilities (Computer) ------------------------- */
 
-    private void computerExecuteAbility(int ind) {
+    private void computerExecuteAbility(int ind, int w) {
         final int index = ind;
+        final int which = w;
+        ArrayList<Card> computerCards = comCards[which];
         final Card card = computerCards.get(index);
         if (card.getAbility() == "Restoration: Highest hand wins") {
             Intent intent = new Intent(this, ExplosiveActivity.class);
@@ -854,7 +978,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 public void run() {
-                    computerrestoration(index);
+                    computerrestoration(index,which);
                 }
             }, 6000);
         }
@@ -865,7 +989,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 public void run() {
-                    computersuddendeath(index);
+                    computersuddendeath(index,which);
                 }
             }, 6000);
         }
@@ -876,44 +1000,115 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 public void run() {
-                    computersabotage(index);
+                    computersabotage(index,which);
                 }
             }, 6000);
         }
         else {
-            final TextView showMessage = (TextView) findViewById(R.id.showMessage);
-            showMessage.setText("COM used " + card.toString() + "!");
+            final TextView showMessage = (TextView) findViewById(R.id.showMessage4P);
+            if (which == 0) {
+                showMessage.setText("COM 1 used " + card.toString() + "!");
+            }
+            else if (which == 1) {
+                showMessage.setText("COM 2 used " + card.toString() + "!");
+            }
+            else {
+                showMessage.setText("COM 3 used " + card.toString() + "!");
+            }
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 public void run() {
                     showMessage.setText(null);
                     if (card.getAbility() == "Opponent discards 2 random cards") {
-                        computerdiscard2(index);
+                        computerdiscard2(index, which);
                     }
                     else if (card.getAbility() == "Draw 2 cards") {
-                        computerdraw(index,2);
+                        computerdraw(index,2,which);
                     }
                     else if (card.getAbility() == "Draw 3 cards") {
-                        computerdraw(index,3);
+                        computerdraw(index,3,which);
                     }
                     else if (card.getAbility() == "Deactivate opponent's cards") {
-                        computerdeactivate(index);
+                        computerdeactivate(index,which);
                     }
                     else if (card.getAbility() == "Opponent discards 2 highest cards") {
-                        computerdiscardhighest(index,2);
+                        computerdiscardhighest(index,2,which);
                     }
                     else if (card.getAbility() == "Opponent discards 3 highest cards") {
-                        computerdiscardhighest(index,3);
+                        computerdiscardhighest(index,3,which);
                     }
                 }
             }, 3000);
         }
     }
 
-    private void computerdiscard2(int index) {
+    private void computerdiscard2(int index, int w) {
+        final int which = w;
+        ArrayList<Card> computerCards = comCards[which];
         computerCards.remove(index);
-        TextView tv = (TextView)findViewById(R.id.computerScore);
+        TextView tv;
+        final ImageView blast1;
+        final ImageView blast2;
+        if (which == 0) {
+            tv = (TextView)findViewById(R.id.com1Score);
+            blast1 = (ImageView) findViewById(R.id.blastCom2);
+            blast2 = (ImageView) findViewById(R.id.blastCom3);
+        }
+        else if (which == 1) {
+            tv = (TextView)findViewById(R.id.com2Score);
+            blast1 = (ImageView) findViewById(R.id.blastCom1);
+            blast2 = (ImageView) findViewById(R.id.blastCom3);
+        }
+        else {
+            tv = (TextView)findViewById(R.id.com3Score);
+            blast1 = (ImageView) findViewById(R.id.blastCom1);
+            blast2 = (ImageView) findViewById(R.id.blastCom2);
+        }
         updateScore(-8, tv);
+        final AnimationDrawable a = (AnimationDrawable) blast1.getBackground();
+        final AnimationDrawable b = (AnimationDrawable) blast2.getBackground();
+        blast1.setVisibility(View.VISIBLE);
+        blast2.setVisibility(View.VISIBLE);
+        a.start();
+        b.start();
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                blast1.clearAnimation();
+                blast2.clearAnimation();
+                blast1.setVisibility(View.INVISIBLE);
+                blast2.setVisibility(View.INVISIBLE);
+            }
+        }, 1000);
+
+        for (int other = 0; other < 3; other++) {
+            if (other!=which) {
+                ArrayList<Card> tempComputerCards = comCards[other];
+                TextView temptv;
+                if (other == 0) {
+                    temptv = (TextView) findViewById(R.id.com1Score);
+                }
+                else if (other == 1) {
+                    temptv = (TextView) findViewById(R.id.com2Score);
+                }
+                else {
+                    temptv = (TextView) findViewById(R.id.com3Score);
+                }
+                if (tempComputerCards.size()>0) {
+                    int tempIndex = random.nextInt(tempComputerCards.size());
+                    int valueToDeduct = tempComputerCards.get(tempIndex).getValue();
+                    tempComputerCards.remove(tempIndex);
+                    updateScore(-valueToDeduct, temptv);
+                    if (tempComputerCards.size()>0) {
+                        tempIndex = random.nextInt(tempComputerCards.size());
+                        valueToDeduct = tempComputerCards.get(tempIndex).getValue();
+                        tempComputerCards.remove(tempIndex);
+                        updateScore(-valueToDeduct, temptv);
+                    }
+                }
+            }
+        }
+
         ArrayList<Integer> canBeDiscarded = new ArrayList<Integer>();
         for (int i = 0; i < boxCards.length; i++) {
             if (!boxIsEmpty[i]) {
@@ -922,26 +1117,37 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         if (canBeDiscarded.size() == 0) {
-            if (suddendeathCount == 0) {
-                endGame();
-            }
-            else if (suddendeathMode) {
-                suddendeathCount--;
-                playerTurn();
-            }
-            else {
-                playerTurn();
-            }
+            Handler h = new Handler();
+            h.postDelayed(new Runnable() {
+                public void run() {
+                    if (suddendeathCount == 0) {
+                        endGame();
+                    }
+                    else {
+                        if (suddendeathMode) {
+                            suddendeathCount--;
+                        }
+                        if (which == 2) {
+                            playerTurn();
+                        }
+                        else {
+                            int temp = which;
+                            temp++;
+                            computerMoves(temp);
+                        }
+                    }
+                }
+            }, 1000);
         }
         else {
             final ArrayList<Integer> toDiscardList = new ArrayList<Integer>();
             int temp = random.nextInt(canBeDiscarded.size());
             int toDiscard = canBeDiscarded.get(temp);
             boxImages[toDiscard].setImageResource(R.drawable.blast);
-            final AnimationDrawable a = (AnimationDrawable) boxImages[toDiscard].getDrawable();
-            a.start();
+            final AnimationDrawable c = (AnimationDrawable) boxImages[toDiscard].getDrawable();
+            c.start();
             int valueToDeduct = boxCards[toDiscard].getValue();
-            TextView mytv = (TextView) findViewById(R.id.playerScore);
+            TextView mytv = (TextView) findViewById(R.id.playerScore4P);
             updateScore(-valueToDeduct, mytv);
             toDiscardList.add(toDiscard);
             canBeDiscarded.remove(temp);
@@ -949,14 +1155,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 temp = random.nextInt(canBeDiscarded.size());
                 toDiscard = canBeDiscarded.get(temp);
                 boxImages[toDiscard].setImageResource(R.drawable.blast);
-                AnimationDrawable b = (AnimationDrawable) boxImages[toDiscard].getDrawable();
-                b.start();
+                AnimationDrawable d = (AnimationDrawable) boxImages[toDiscard].getDrawable();
+                d.start();
                 valueToDeduct = boxCards[toDiscard].getValue();
                 updateScore(-valueToDeduct, mytv);
                 toDiscardList.add(toDiscard);
             }
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
+            Handler h2 = new Handler();
+            h2.postDelayed(new Runnable() {
                 public void run() {
                     for (int m = 0; m < toDiscardList.size(); m++) {
                         boxImages[toDiscardList.get(m)].clearAnimation();
@@ -967,34 +1173,56 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     if (suddendeathCount == 0) {
                         endGame();
                     }
-                    else if (suddendeathMode) {
-                        suddendeathCount--;
-                        playerTurn();
-                    }
                     else {
-                        playerTurn();
+                        if (suddendeathMode) {
+                            suddendeathCount--;
+                        }
+                        if (which == 2) {
+                            playerTurn();
+                        }
+                        else {
+                            int temp = which;
+                            temp++;
+                            computerMoves(temp);
+                        }
                     }
                 }
             }, 1000);
         }
     }
 
-    private void computerdraw(int index, int howMany) {
+    private void computerdraw(int index, int howMany, int which) {
+        ArrayList<Card> computerCards = comCards[which];
         computerCards.remove(index);
-        TextView tv = (TextView)findViewById(R.id.computerScore);
+        TextView tv;
+        if (which == 0) {
+            tv = (TextView) findViewById(R.id.com1Score);
+        } else if (which == 1) {
+            tv = (TextView) findViewById(R.id.com2Score);
+        } else {
+            tv = (TextView) findViewById(R.id.com3Score);
+        }
         if (howMany == 2) {
             updateScore(-9, tv);
-        }
-        else if (howMany == 3) {
+        } else if (howMany == 3) {
             updateScore(-10, tv);
         }
-
-        computerDrawCards(howMany);
+        computerDrawCards(howMany, which);
     }
 
-    private void computerdeactivate(int index) {
+    private void computerdeactivate(int index, int which) {
+        ArrayList<Card> computerCards = comCards[which];
         computerCards.remove(index);
-        TextView tv = (TextView)findViewById(R.id.computerScore);
+        TextView tv;
+        if (which == 0) {
+            tv = (TextView) findViewById(R.id.com1Score);
+        }
+        else if (which == 1) {
+            tv = (TextView) findViewById(R.id.com2Score);
+        }
+        else{
+            tv = (TextView) findViewById(R.id.com3Score);
+        }
         updateScore(-1, tv);
 
         for (int i = 0; i < boxCards.length; i++) {
@@ -1002,27 +1230,101 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 boxCards[i].deactivate();
             }
         }
+        for (int other = 0; other < 3; other++) {
+            if (other!=which) {
+                ArrayList<Card> tempComputerCards = comCards[other];
+                if (tempComputerCards.size()>0) {
+                    for (int i = 0; i < tempComputerCards.size(); i++) {
+                        tempComputerCards.get(i).deactivate();
+                    }
+                }
+            }
+        }
         if (suddendeathCount == 0) {
             endGame();
         }
-        else if (suddendeathMode) {
-            suddendeathCount--;
-            playerTurn();
-        }
         else {
-            playerTurn();
+            if (suddendeathMode) {
+                suddendeathCount--;
+            }
+            if (which == 2) {
+                playerTurn();
+            }
+            else {
+                int temp = which;
+                temp++;
+                computerMoves(temp);
+            }
         }
     }
 
-    private void computerdiscardhighest(int index, int howMany) {
+    private void computerdiscardhighest(int index, int howMany, int w) {
+        final int which = w;
+        ArrayList<Card> computerCards = comCards[which];
         computerCards.remove(index);
-        TextView tv = (TextView)findViewById(R.id.computerScore);
+        TextView tv;
+        final ImageView blast1;
+        final ImageView blast2;
+        if (which == 0) {
+            tv = (TextView)findViewById(R.id.com1Score);
+            blast1 = (ImageView) findViewById(R.id.blastCom2);
+            blast2 = (ImageView) findViewById(R.id.blastCom3);
+        }
+        else if (which == 1) {
+            tv = (TextView)findViewById(R.id.com2Score);
+            blast1 = (ImageView) findViewById(R.id.blastCom1);
+            blast2 = (ImageView) findViewById(R.id.blastCom3);
+        }
+        else {
+            tv = (TextView)findViewById(R.id.com3Score);
+            blast1 = (ImageView) findViewById(R.id.blastCom1);
+            blast2 = (ImageView) findViewById(R.id.blastCom2);
+        }
         if (howMany == 2) {
             updateScore(-11, tv);
         }
         else if (howMany == 3) {
             updateScore(-12, tv);
         }
+        final AnimationDrawable a = (AnimationDrawable) blast1.getBackground();
+        final AnimationDrawable b = (AnimationDrawable) blast2.getBackground();
+        blast1.setVisibility(View.VISIBLE);
+        blast2.setVisibility(View.VISIBLE);
+        a.start();
+        b.start();
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                blast1.clearAnimation();
+                blast2.clearAnimation();
+                blast1.setVisibility(View.INVISIBLE);
+                blast2.setVisibility(View.INVISIBLE);
+            }
+        }, 1000);
+
+        for (int other = 0; other < 3; other++) {
+            if (other!=which) {
+                ArrayList<Card> tempComputerCards = comCards[other];
+                TextView temptv;
+                if (other == 0) {
+                    temptv = (TextView) findViewById(R.id.com1Score);
+                } else if (other == 1) {
+                    temptv = (TextView) findViewById(R.id.com2Score);
+                } else {
+                    temptv = (TextView) findViewById(R.id.com3Score);
+                }
+                Collections.sort(tempComputerCards);
+                int valueToDeduct;
+                for (int i = 0; i < howMany; i++) {
+                    if (tempComputerCards.size()>0) {
+                        valueToDeduct = tempComputerCards.get(tempComputerCards.size()-1).getValue();
+                        tempComputerCards.remove(tempComputerCards.size()-1);
+                        updateScore(-valueToDeduct, temptv);
+                    }
+                }
+            }
+        }
+
         ArrayList<Card> allCards = new ArrayList<Card>();
         for (int i = 0; i < boxCards.length; i++) {
             if (!boxIsEmpty[i]) {
@@ -1032,18 +1334,29 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         Collections.sort(allCards);
 
         if (allCards.size() == 0) {
-            if (suddendeathCount == 0) {
-                endGame();
-            }
-            else if (suddendeathMode) {
-                suddendeathCount--;
-                playerTurn();
-            }
-            else {
-                playerTurn();
-            }
+            Handler h = new Handler();
+            h.postDelayed(new Runnable() {
+                public void run() {
+                    if (suddendeathCount == 0) {
+                        endGame();
+                    }
+                    else {
+                        if (suddendeathMode) {
+                            suddendeathCount--;
+                        }
+                        if (which == 2) {
+                            playerTurn();
+                        }
+                        else {
+                            int temp = which;
+                            temp++;
+                            computerMoves(temp);
+                        }
+                    }
+                }
+            }, 1000);
         }
-        else{
+        else {
             final ArrayList<Integer> toDiscardList = new ArrayList<Integer>();
             for (int j = 0; j < howMany; j++) {
                 if (allCards.size() > 0) {
@@ -1057,16 +1370,16 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     int toDiscard = temp;
                     boxImages[toDiscard].setImageResource(R.drawable.blast);
-                    AnimationDrawable a = (AnimationDrawable) boxImages[toDiscard].getDrawable();
-                    a.start();
+                    AnimationDrawable c = (AnimationDrawable) boxImages[toDiscard].getDrawable();
+                    c.start();
                     int valueToDeduct = boxCards[toDiscard].getValue();
-                    TextView mytv = (TextView) findViewById(R.id.playerScore);
+                    TextView mytv = (TextView) findViewById(R.id.playerScore4P);
                     updateScore(-valueToDeduct, mytv);
                     toDiscardList.add(toDiscard);
                     allCards.remove(allCards.size()-1);
                 }
             }
-            Handler handler = new Handler();
+            Handler h2 = new Handler();
             handler.postDelayed(new Runnable() {
                 public void run() {
                     for (int m = 0; m < toDiscardList.size(); m++) {
@@ -1078,66 +1391,120 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     if (suddendeathCount == 0) {
                         endGame();
                     }
-                    else if (suddendeathMode) {
-                        suddendeathCount--;
-                        playerTurn();
-                    }
                     else {
-                        playerTurn();
+                        if (suddendeathMode) {
+                            suddendeathCount--;
+                        }
+                        if (which == 2) {
+                            playerTurn();
+                        }
+                        else {
+                            int temp = which;
+                            temp++;
+                            computerMoves(temp);
+                        }
                     }
                 }
             }, 1000);
         }
-
     }
 
-    private void computerrestoration(int index) {
+    private void computerrestoration(int index, int which) {
+        ArrayList<Card> computerCards = comCards[which];
         computerCards.remove(index);
-        TextView tv = (TextView)findViewById(R.id.computerScore);
+        TextView tv;
+        if (which == 0) {
+            tv = (TextView) findViewById(R.id.com1Score);
+        }
+        else if (which == 1) {
+            tv = (TextView) findViewById(R.id.com2Score);
+        }
+        else{
+            tv = (TextView) findViewById(R.id.com3Score);
+        }
         updateScore(-1, tv);
 
-        RelativeLayout layout = (RelativeLayout) findViewById(R.id.gamelayout);
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.gamelayout4P);
         layout.setBackgroundColor(Color.RED);
         winCondition = 0;
         if (suddendeathCount == 0) {
             endGame();
         }
-        else if (suddendeathMode) {
-            suddendeathCount--;
-            playerTurn();
-        }
         else {
-            playerTurn();
+            if (suddendeathMode) {
+                suddendeathCount--;
+            }
+            if (which == 2) {
+                playerTurn();
+            }
+            else {
+                int temp = which;
+                temp++;
+                computerMoves(temp);
+            }
         }
     }
 
-    private void computersuddendeath(int index) {
+    private void computersuddendeath(int index, int which) {
+        ArrayList<Card> computerCards = comCards[which];
         computerCards.remove(index);
-        TextView tv = (TextView)findViewById(R.id.computerScore);
+        TextView tv;
+        if (which == 0) {
+            tv = (TextView) findViewById(R.id.com1Score);
+        }
+        else if (which == 1) {
+            tv = (TextView) findViewById(R.id.com2Score);
+        }
+        else{
+            tv = (TextView) findViewById(R.id.com3Score);
+        }
         updateScore(-13, tv);
 
         suddendeathMode = true;
         suddendeathCount--;
-        playerTurn();
+        if (which == 2) {
+            playerTurn();
+        }
+        else {
+            int temp = which;
+            temp++;
+            computerMoves(temp);
+        }
     }
 
-    private void computersabotage(int index) {
+    private void computersabotage(int index, int which) {
+        ArrayList<Card> computerCards = comCards[which];
         computerCards.remove(index);
-        TextView tv = (TextView)findViewById(R.id.computerScore);
+        TextView tv;
+        if (which == 0) {
+            tv = (TextView) findViewById(R.id.com1Score);
+        }
+        else if (which == 1) {
+            tv = (TextView) findViewById(R.id.com2Score);
+        }
+        else{
+            tv = (TextView) findViewById(R.id.com3Score);
+        }
         updateScore(-13, tv);
 
-        RelativeLayout layout = (RelativeLayout) findViewById(R.id.gamelayout);
+        RelativeLayout layout = (RelativeLayout) findViewById(R.id.gamelayout4P);
         layout.setBackgroundColor(Color.BLACK);
         winCondition = 1;
         if (suddendeathCount == 0) {
             endGame();
         }
-        else if (suddendeathMode) {
-            suddendeathCount--;
-            playerTurn();
-        }
         else {
-            playerTurn();
+            if (suddendeathMode) {
+                suddendeathCount--;
+            }
+            if (which == 2) {
+                playerTurn();
+            }
+            else {
+                int temp = which;
+                temp++;
+                computerMoves(temp);
+            }
         }
     }
 }
