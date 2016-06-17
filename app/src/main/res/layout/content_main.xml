@@ -21,4 +21,14 @@
         android:text="@string/start_game"
         android:onClick="playGame"/>
 
+    <Button
+        android:id="@+id/playMultiButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/start_multi_game"
+        android:onClick="createRoom"
+        android:layout_below="@+id/playButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp" />
+
 </RelativeLayout>

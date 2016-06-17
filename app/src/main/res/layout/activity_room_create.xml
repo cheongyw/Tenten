@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Your username: "
+        android:id="@+id/textView_username"
+        android:layout_weight="0.04"
+        android:layout_marginTop="20dp"
+        />
+
+    <EditText
+        android:layout_width="199dp"
+        android:layout_height="30dp"
+        android:id="@+id/editText_username" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Create a Room!"
+        android:id="@+id/textView_createRoomTitle"
+        android:layout_weight="0.09"
+        android:layout_marginTop="30dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Room name: "
+        android:id="@+id/textView_createRoomName"
+        android:layout_weight="0.05" />
+
+    <EditText
+        android:layout_width="199dp"
+        android:layout_height="30dp"
+        android:id="@+id/editText_createRoomName" />
+
+    <LinearLayout android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal">
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2 Players"
+        android:id="@+id/startMulti2PGame"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:onClick="start2PlayerGame" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="4 Players"
+        android:id="@+id/startMulti4PGame"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:onClick="start4PlayerGame" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Or Join Someone Else's!"
+        android:id="@+id/textView_joinRoomTitle"
+        android:layout_weight="0.04" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Room Name: "
+        android:id="@+id/textView_joinRoomName"
+        android:layout_weight="0.04" />
+
+    <EditText
+        android:layout_width="199dp"
+        android:layout_height="30dp"
+        android:id="@+id/editText_joinRoomName" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Join Room with Above Name"
+        android:id="@+id/joinGameName"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.04" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Join Random 2P"
+            android:id="@+id/joinMulti2PGame"
+            android:layout_weight="0.04" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Join Random 4P"
+            android:id="@+id/joinMulti4PGame"
+            android:layout_weight="0.04" />
+    </LinearLayout>
+</LinearLayout>

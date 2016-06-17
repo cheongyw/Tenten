@@ -55,4 +55,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, numPlayersActivity.class);
         startActivity(intent);
     }
+
+    public void createRoom(View view) {
+        Intent intent = new Intent(this, createMultiRoom.class);
+        startActivity(intent);
+    }
 }
