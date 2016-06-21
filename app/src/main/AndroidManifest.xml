@@ -30,7 +30,8 @@
         <activity android:name=".GameActivity4P" />
         <activity android:name=".createMultiRoom" />
         <activity android:name=".MultiGameActivity" />
-        <activity android:name=".MultiGameActivity4P"></activity>
+        <activity android:name=".MultiGameActivity4P" />
+        <activity android:name=".waitingRoom"></activity>
     </application>
 
 </manifest>
