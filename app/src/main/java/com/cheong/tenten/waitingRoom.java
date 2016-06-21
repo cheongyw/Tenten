@@ -29,6 +29,13 @@ public class waitingRoom extends AppCompatActivity {
     private ListView playerList;
     private Button buttonLeave;
     private Button buttonStart;
+    private List<HashMap<String, Object>> players;
+    private HashMap<String, Object> player;
+    private DatabaseReference roomDataRef;
+    private String key;
+    private String username;
+    private ValueEventListener roomListener;
+    private Room room;
 
 
     @Override
@@ -39,22 +46,56 @@ public class waitingRoom extends AppCompatActivity {
         buttonLeave = (Button) findViewById(R.id.button_leave);
         buttonStart = (Button) findViewById(R.id.button_start);
 
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+        Intent intent = getIntent();
+        key = intent.getStringExtra("key");
+        username = intent.getStringExtra("user");
+        roomDataRef = FirebaseDatabase.getInstance().getReference().child("games").child(key);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_waiting_room);
-        Intent intent = getIntent();
-        String key = intent.getStringExtra("key");
 
+        //set up listview
+
+        ValueEventListener roomListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Get room object and use the values to update the UI
+                room = dataSnapshot.getValue(Room.class);
+                // ...
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        };
+        roomDataRef.addValueEventListener(roomListener);
     }
 
     public void leaveRoom(View view){
         //remove user name from database
-        //go back to mainactivity
+        players = new ArrayList<HashMap<String, Object>> (room.players);
+        player = new HashMap<String, Object>();
+        player.put("username", username);
+        player.put("score", 0);
+        player.put("cards", new ArrayList<Card>());
+        players.remove(player);
+        roomDataRef.child("players").setValue(players);
+
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
     public void startRoom(View view){
         //check if number of players match
         //if no, set msg visibility
         //else move to multigameactivity
+        if (true){
+
+        }
+        else { //split into another if else here for 2p and 4p
+            Intent intent = new Intent(this, waitingRoom.class);
+            intent.putExtra("key", key);
+            intent.putExtra("user", username);
+            startActivity(intent);
+        }
     }
 }

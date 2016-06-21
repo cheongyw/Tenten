@@ -66,14 +66,13 @@ public class createMultiRoom extends AppCompatActivity {
         join4p = (Button) findViewById(R.id.joinMulti4PGame);
 
         database = FirebaseDatabase.getInstance().getReference();
-        roomName = "";
-        username = "";
-        key = "";
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_room_create);
     }
 
     public void start2PlayerGame(View view) {
+        etUsername = (EditText) findViewById(R.id.editText_username);
+        etCreateName = (EditText) findViewById(R.id.editText_createRoomName);
         roomName = etCreateName.getText().toString();
         String creator = etUsername.getText().toString();
         Room newRoom = new Room(roomName, 2, creator);
@@ -86,10 +85,13 @@ public class createMultiRoom extends AppCompatActivity {
 
         Intent intent = new Intent(this, waitingRoom.class);
         intent.putExtra("key", key);
+        intent.putExtra("user", username);
         startActivity(intent);
     }
 
     public void start4PlayerGame(View view) {
+        etUsername = (EditText) findViewById(R.id.editText_username);
+        etCreateName = (EditText) findViewById(R.id.editText_createRoomName);
         roomName = etCreateName.getText().toString();
         String creator = etUsername.getText().toString();
         Room newRoom = new Room(roomName, 4, creator);
@@ -102,10 +104,13 @@ public class createMultiRoom extends AppCompatActivity {
 
         Intent intent = new Intent(this, waitingRoom.class);
         intent.putExtra("key", key);
+        intent.putExtra("user", username);
         startActivity(intent);
     }
 
     public void joinGameName(View view) {
+        etUsername = (EditText) findViewById(R.id.editText_username);
+        etJoinName = (EditText) findViewById(R.id.editText_joinRoomName);
         //check if have too many ppl before joining!
         roomName = etJoinName.getText().toString();
         username = etUsername.getText().toString();
@@ -137,10 +142,12 @@ public class createMultiRoom extends AppCompatActivity {
         });
         Intent intent = new Intent(this, waitingRoom.class);
         intent.putExtra("key", key);
+        intent.putExtra("user", username);
         startActivity(intent);
     }
 
     public void join2PlayerGame(View view) {
+        etUsername = (EditText) findViewById(R.id.editText_username);
         username = etUsername.getText().toString();
 
         database.child("games").orderByChild("nPlayers").equalTo(2).addValueEventListener(new ValueEventListener() {
@@ -180,11 +187,13 @@ public class createMultiRoom extends AppCompatActivity {
         else {
             Intent intent = new Intent(this, waitingRoom.class);
             intent.putExtra("key", key);
+            intent.putExtra("user", username);
             startActivity(intent);
         }
     }
 
     public void join4PlayerGame(View view) {
+        etUsername = (EditText) findViewById(R.id.editText_username);
         username = etUsername.getText().toString();
 
         database.child("games").orderByChild("nPlayers").equalTo(4).addValueEventListener(new ValueEventListener() {
@@ -224,6 +233,7 @@ public class createMultiRoom extends AppCompatActivity {
         else {
             Intent intent = new Intent(this, waitingRoom.class);
             intent.putExtra("key", key);
+            intent.putExtra("user", username);
             startActivity(intent);
         }
     }
