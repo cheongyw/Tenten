@@ -26,20 +26,10 @@ import java.util.ArrayList;
 
 public class createMultiRoom extends AppCompatActivity {
     //UI components
-    private TextView tvUsername;
-    private TextView tvCreateTitle;
-    private TextView tvCreateName;
-    private TextView tvJoinTitle;
-    private TextView tvJoinName;
-    private TextView tvAvailability;
+    private TextView errorMessage;
     private EditText etUsername;
     private EditText etCreateName;
     private EditText etJoinName;
-    private Button create2p;
-    private Button create4p;
-    private Button joinName;
-    private Button join2p;
-    private Button join4p;
 
     private DatabaseReference database;
     private String roomName;
@@ -50,20 +40,10 @@ public class createMultiRoom extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         //private static final String TAG = "createMultiplayerRoomActivity";
 
-        tvUsername = (TextView) findViewById(R.id.textView_username);
-        tvCreateTitle = (TextView) findViewById(R.id.textView_createRoomTitle);
-        tvCreateName = (TextView) findViewById(R.id.textView_createRoomName);
-        tvJoinTitle = (TextView) findViewById(R.id.textView_joinRoomTitle);
-        tvJoinName = (TextView) findViewById(R.id.textView_joinRoomName);
-        tvAvailability = (TextView) findViewById(R.id.textView_roomAvailability);
+        errorMessage = (TextView) findViewById(R.id.textView_errorMessage);
         etUsername = (EditText) findViewById(R.id.editText_username);
         etCreateName = (EditText) findViewById(R.id.editText_createRoomName);
         etJoinName = (EditText) findViewById(R.id.editText_joinRoomName);
-        create2p = (Button) findViewById(R.id.startMulti2PGame);
-        create4p = (Button) findViewById(R.id.startMulti4PGame);
-        joinName = (Button) findViewById(R.id.joinGameName);
-        join2p = (Button) findViewById(R.id.joinMulti2PGame);
-        join4p = (Button) findViewById(R.id.joinMulti4PGame);
 
         database = FirebaseDatabase.getInstance().getReference();
         super.onCreate(savedInstanceState);
@@ -73,20 +53,30 @@ public class createMultiRoom extends AppCompatActivity {
     public void start2PlayerGame(View view) {
         etUsername = (EditText) findViewById(R.id.editText_username);
         etCreateName = (EditText) findViewById(R.id.editText_createRoomName);
-        roomName = etCreateName.getText().toString();
-        String creator = etUsername.getText().toString();
-        Room newRoom = new Room(roomName, 2, creator);
-        Map<String, Object> newRoomValues = newRoom.toMap();
+        errorMessage = (TextView) findViewById(R.id.textView_errorMessage);
+        if (etUsername.getText()==null) {
+            errorMessage.setText("Please enter user name.");
+        }
+        else if (etCreateName.getText()==null) {
+            errorMessage.setText("Please enter room name.");
+        }
+        else {
+            errorMessage.setText(null);
+            roomName = etCreateName.getText().toString();
+            String creator = etUsername.getText().toString();
+            Room newRoom = new Room(roomName, 2, creator);
+            Map<String, Object> newRoomValues = newRoom.toMap();
 
-        key = database.child("games").push().getKey();
-        Map<String, Object> childUpdate = new HashMap<>();
-        childUpdate.put("/games/" + key, newRoomValues);
-        database.updateChildren(childUpdate);
+            key = database.child("games").push().getKey();
+            Map<String, Object> childUpdate = new HashMap<>();
+            childUpdate.put("/games/" + key, newRoomValues);
+            database.updateChildren(childUpdate);
 
-        Intent intent = new Intent(this, waitingRoom.class);
-        intent.putExtra("key", key);
-        intent.putExtra("user", username);
-        startActivity(intent);
+            Intent intent = new Intent(this, waitingRoom.class);
+            intent.putExtra("key", key);
+            intent.putExtra("user", username);
+            startActivity(intent);
+        }
     }
 
     public void start4PlayerGame(View view) {
@@ -120,12 +110,13 @@ public class createMultiRoom extends AppCompatActivity {
             public void onDataChange(DataSnapshot snapshot) {
                 for (DataSnapshot child: snapshot.getChildren()) {
                     if (!child.exists()) {
-                        tvAvailability.setVisibility(View.VISIBLE);
+                        errorMessage.setText("Room Unavailable.");
                     } else {
+                        errorMessage.setText(null);
                         Room room = child.getValue(Room.class);
                         key = child.getKey();
                         List<HashMap<String, Object>> players = room.players;
-                        HashMap<String, Object> user = new HashMap<String, Object>();
+                        HashMap<String, Object> user = new HashMap<>();
                         user.put("username", username);
                         user.put("score", 0);
                         user.put("cards", new ArrayList<Card>());
@@ -158,12 +149,14 @@ public class createMultiRoom extends AppCompatActivity {
                 for (DataSnapshot child: snapshot.getChildren()) {
                     room = child.getValue(Room.class);
                     if (!child.exists()) {
-                        tvAvailability.setVisibility(View.VISIBLE);
+                        errorMessage.setText("Room Unavailable.");
                     }
                     else if (room.gameStarted == true){
+                        errorMessage.setText(null);
                         continue;
                     }
                     else {
+                        errorMessage.setText(null);
                         key = child.getKey();
                         List<HashMap<String, Object>> players = room.players;
                         HashMap<String, Object> user = new HashMap<String, Object>();
@@ -182,9 +175,10 @@ public class createMultiRoom extends AppCompatActivity {
             }
         });
         if (key.equals("0")){
-            tvAvailability.setVisibility(View.VISIBLE);
+            errorMessage.setText("Room Unavailable.");
         }
         else {
+            errorMessage.setText(null);
             Intent intent = new Intent(this, waitingRoom.class);
             intent.putExtra("key", key);
             intent.putExtra("user", username);
@@ -204,12 +198,14 @@ public class createMultiRoom extends AppCompatActivity {
                 for (DataSnapshot child: snapshot.getChildren()) {
                     room = child.getValue(Room.class);
                     if (!child.exists()) {
-                        tvAvailability.setVisibility(View.VISIBLE);
+                        errorMessage.setText("Room Unavailable.");
                     }
                     else if (room.gameStarted == true){
+                        errorMessage.setText(null);
                         continue;
                     }
                     else {
+                        errorMessage.setText(null);
                         key = child.getKey();
                         List<HashMap<String, Object>> players = room.players;
                         HashMap<String, Object> user = new HashMap<String, Object>();
@@ -228,9 +224,10 @@ public class createMultiRoom extends AppCompatActivity {
             }
         });
         if (key.equals("0")){
-            tvAvailability.setVisibility(View.VISIBLE);
+            errorMessage.setText("Room Unavailable.");
         }
         else {
+            errorMessage.setText(null);
             Intent intent = new Intent(this, waitingRoom.class);
             intent.putExtra("key", key);
             intent.putExtra("user", username);

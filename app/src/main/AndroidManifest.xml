@@ -3,6 +3,7 @@
     package="com.cheong.tenten">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -31,7 +32,8 @@
         <activity android:name=".createMultiRoom" />
         <activity android:name=".MultiGameActivity" />
         <activity android:name=".MultiGameActivity4P" />
-        <activity android:name=".waitingRoom"></activity>
+        <activity android:name=".waitingRoom" />
+        <activity android:name=".HowToPlay"></activity>
     </application>
 
 </manifest>

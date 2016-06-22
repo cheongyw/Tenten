@@ -17,7 +17,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Random;
 
 public class GameActivity4P extends AppCompatActivity implements View.OnClickListener {
@@ -630,34 +632,47 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
         int com2_Score = Integer.parseInt(com2_tv.getText().toString());
         TextView com3_tv = (TextView)findViewById(R.id.com3Score);
         int com3_Score = Integer.parseInt(com3_tv.getText().toString());
-        Hashtable<Integer, String> table = new Hashtable<>();
-        table.put(com1_Score,"COM 1");table.put(com2_Score,"COM 2");table.put(com3_Score,"COM 3");table.put(playerScore,"You");
-        ArrayList<Integer> temp = new ArrayList<>();
-        temp.add(com1_Score);temp.add(com2_Score);temp.add(com3_Score);temp.add(playerScore);
-        Collections.sort(temp);
+        Hashtable<String, Integer> table = new Hashtable<>();
+        table.put("COM 1",com1_Score);table.put("COM 2",com2_Score);table.put("COM 3",com3_Score);table.put("You",playerScore);
+        ArrayList<String> sortedKeys = sortValue(table);
         AlertDialog.Builder outcome = new AlertDialog.Builder(this);
         if (winCondition == 0) {
-            if (table.get(temp.get(3))=="You") {
+            if (sortedKeys.get(3)=="You") {
                 outcome.setTitle("You win!");
             }
             else {
                 outcome.setTitle("You lose!");
             }
-            String message = table.get(temp.get(3))+"\n"+"\n"+table.get(temp.get(2))+"\n"+"\n"+table.get(temp.get(1))+"\n"+"\n"+table.get(temp.get(0));
+            String message = sortedKeys.get(3)+"\n"+"\n"+sortedKeys.get(2)+"\n"+"\n"+sortedKeys.get(1)+"\n"+"\n"+sortedKeys.get(0);
             outcome.setMessage(message);
         }
         else if (winCondition == 1) {
-            if (table.get(temp.get(0))=="You") {
+            if (sortedKeys.get(0)=="You") {
                 outcome.setTitle("You win!");
             }
             else {
                 outcome.setTitle("You lose!");
             }
-            String message = table.get(temp.get(0))+"\n"+"\n"+table.get(temp.get(1))+"\n"+"\n"+table.get(temp.get(2))+"\n"+"\n"+table.get(temp.get(3));
+            String message = sortedKeys.get(0)+"\n"+"\n"+sortedKeys.get(1)+"\n"+"\n"+sortedKeys.get(2)+"\n"+"\n"+sortedKeys.get(3);
             outcome.setMessage(message);
         }
         outcome.setCancelable(true);
         outcome.show();
+    }
+
+    public static ArrayList<String> sortValue(Hashtable<String,Integer> t) {
+        ArrayList<Map.Entry<String, Integer>> l = new ArrayList(t.entrySet());
+        Collections.sort(l, new Comparator<Map.Entry<String, Integer>>(){
+
+            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                return o1.getValue().compareTo(o2.getValue());
+            }});
+
+        ArrayList<String> sortedKeys = new ArrayList<>();
+        for (int i = 0; i < l.size(); i++) {
+            sortedKeys.add(l.get(i).getKey());
+        }
+        return sortedKeys;
     }
 
     /* -----------Methods for card abilities (User) ------------------------- */

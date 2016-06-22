@@ -2,7 +2,6 @@ package com.cheong.tenten;
 
 import android.graphics.Color;
 import android.util.SparseArray;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;

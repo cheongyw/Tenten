@@ -16,8 +16,9 @@
         android:id="@+id/playButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/playMultiButton"
+        android:layout_marginBottom="30dp"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
         android:text="@string/start_game"
         android:onClick="playGame"/>
 
@@ -27,8 +28,17 @@
         android:layout_height="wrap_content"
         android:text="@string/start_multi_game"
         android:onClick="createRoom"
-        android:layout_below="@+id/playButton"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp" />
+        android:layout_centerVertical="true" />
+
+    <Button
+        android:id="@+id/howToPlayButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/playMultiButton"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:text="@string/how_to_play"
+        android:onClick="howToPlay"/>
 
 </RelativeLayout>

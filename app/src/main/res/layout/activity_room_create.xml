@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Create a Room!"
+        android:text="Create new room"
         android:id="@+id/textView_createRoomTitle"
         android:layout_weight="0.09"
         android:layout_marginTop="10dp"
@@ -50,23 +50,24 @@
         android:layout_width="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="center_horizontal">
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="2 Players"
-        android:id="@+id/startMulti2PGame"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
-        android:onClick="start2PlayerGame" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="4 Players"
-        android:id="@+id/startMulti4PGame"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10dp"
-        android:onClick="start4PlayerGame" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2 Players"
+            android:id="@+id/startMulti2PGame"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:onClick="start2PlayerGame" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4 Players"
+            android:id="@+id/startMulti4PGame"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:onClick="start4PlayerGame" />
 
     </LinearLayout>
 
@@ -74,7 +75,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Or Join Someone Else's!"
+        android:text="Join existing room"
         android:id="@+id/textView_joinRoomTitle"
         android:layout_weight="0.04"
         android:paddingStart="10dp"
@@ -84,7 +85,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Room Name: "
+        android:text="Room name: "
         android:id="@+id/textView_joinRoomName"
         android:layout_weight="0.04"
         android:paddingStart="10dp"
@@ -98,7 +99,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Join Room with Above Name"
+        android:text="Join Above room"
         android:id="@+id/joinGameName"
         android:layout_gravity="center_horizontal"
         android:layout_weight="0.04"
@@ -131,11 +132,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Room Unavailable"
-        android:id="@+id/textView_roomAvailability"
+        android:id="@+id/textView_errorMessage"
         android:layout_marginTop="10dp"
         android:layout_gravity="center_horizontal"
         android:layout_weight="0.04"
-        android:textColor="#cc0000"
-        android:visibility="invisible" />
+        android:textColor="#cc0000" />
 </LinearLayout>
