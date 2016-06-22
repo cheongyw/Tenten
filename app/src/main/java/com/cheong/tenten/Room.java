@@ -41,4 +41,21 @@ public class Room {
         return result;
     }
 
+    //getters
+    public boolean gameStarted(){
+        return gameStarted;
+    }
+    public boolean gameEnded(){
+        return gameEnded;
+    }
+    public int nPlayers(){
+        return nPlayers;
+    }
+    public String roomName(){
+        return roomName;
+    }
+    public HashMap<String, HashMap<String, Object>> players(){
+        return players;
+    }
+
 }
