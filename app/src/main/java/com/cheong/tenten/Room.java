@@ -13,7 +13,7 @@ public class Room {
     public boolean gameEnded;
     public int nPlayers;
     public String roomName;
-    public List<HashMap<String, Object>> players;
+    public HashMap<String, HashMap<String, Object>> players;
 
     public Room(){}
 
@@ -23,12 +23,11 @@ public class Room {
         nPlayers = nUsers;
         roomName = name;
 
-        players = new ArrayList<HashMap<String, Object>>();
+        players = new HashMap<String, HashMap<String, Object>>();
         HashMap<String, Object> creator = new HashMap<String, Object>();
-        creator.put("username", creatorName);
         creator.put("score", 0);
         creator.put("cards", new ArrayList<Card>());
-        players.add(creator);
+        players.put(creatorName, creator);
 
     }
     public Map<String, Object> toMap(){

@@ -24,12 +24,10 @@ import java.util.ArrayList;
 
 public class waitingRoom extends AppCompatActivity {
 
-    private TextView tvTitle;
-    private TextView tvRoomName;
     private ListView playerList;
     private Button buttonLeave;
     private Button buttonStart;
-    private List<HashMap<String, Object>> players;
+    private HashMap<String, HashMap<String, Object>> players;
     private HashMap<String, Object> player;
     private DatabaseReference roomDataRef;
     private String key;
@@ -40,8 +38,7 @@ public class waitingRoom extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        tvTitle = (TextView) findViewById(R.id.textView_players);
-        tvRoomName = (TextView) findViewById(R.id.textView_roomName);
+
         playerList = (ListView) findViewById(R.id.listView);
         buttonLeave = (Button) findViewById(R.id.button_leave);
         buttonStart = (Button) findViewById(R.id.button_start);
@@ -72,16 +69,14 @@ public class waitingRoom extends AppCompatActivity {
 
     public void leaveRoom(View view){
         //remove user name from database
-        players = new ArrayList<HashMap<String, Object>> (room.players);
-        player = new HashMap<String, Object>();
-        player.put("username", username);
-        player.put("score", 0);
-        player.put("cards", new ArrayList<Card>());
-        players.remove(player);
+        players = room.players;
+        players.remove(username);
         roomDataRef.child("players").setValue(players);
 
         Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+        finish();
     }
 
     public void startRoom(View view){
@@ -95,7 +90,9 @@ public class waitingRoom extends AppCompatActivity {
             Intent intent = new Intent(this, waitingRoom.class);
             intent.putExtra("key", key);
             intent.putExtra("user", username);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
+            finish();
         }
     }
 }
