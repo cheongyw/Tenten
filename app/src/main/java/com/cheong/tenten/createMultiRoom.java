@@ -115,140 +115,162 @@ public class createMultiRoom extends AppCompatActivity {
     public void joinGameName(View view) {
         etUsername = (EditText) findViewById(R.id.editText_username);
         etJoinName = (EditText) findViewById(R.id.editText_joinRoomName);
-        //check if have too many ppl before joining!
-        roomName = etJoinName.getText().toString();
-        username = etUsername.getText().toString();
+        errorMessage = (TextView) findViewById(R.id.textView_errorMessage);
+        if (etUsername.getText().toString().equals("")) {
+            errorMessage.setText("Please enter user name.");
+        }
+        else if (etJoinName.getText().toString().equals("")) {
+            errorMessage.setText("Please enter room name.");
+        }
+        else {
+            errorMessage.setText(null);
+            //check if have too many ppl before joining!
+            roomName = etJoinName.getText().toString();
+            username = etUsername.getText().toString();
 
-        database.child("games").equalTo("roomName").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                for (DataSnapshot child: snapshot.getChildren()) {
-                    if (!child.exists()) {
-                        errorMessage.setText("Room Unavailable.");
-                    } else {
-                        errorMessage.setText(null);
-                        Room room = child.getValue(Room.class);
-                        key = child.getKey();
-                        HashMap<String, HashMap<String, Object>> players = room.players;
-                        HashMap<String, Object> user = new HashMap<>();
-                        user.put("score", 0);
-                        user.put("cards", new ArrayList<Card>());
-                        players.put(username, user);
-                        database.child("games").child(key).child("players").setValue(players);
-                        break;
+            database.child("games").equalTo("roomName").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    for (DataSnapshot child: snapshot.getChildren()) {
+                        if (!child.exists()) {
+                            errorMessage.setText("Room Unavailable.");
+                        } else {
+                            errorMessage.setText(null);
+                            Room room = child.getValue(Room.class);
+                            key = child.getKey();
+                            HashMap<String, HashMap<String, Object>> players = room.players;
+                            HashMap<String, Object> user = new HashMap<>();
+                            user.put("score", 0);
+                            user.put("cards", new ArrayList<Card>());
+                            players.put(username, user);
+                            database.child("games").child(key).child("players").setValue(players);
+                            break;
+                        }
                     }
-                }
 
-            }
-            @Override
-            public void onCancelled(DatabaseError firebaseError) {
-            }
-        });
-        Intent intent = new Intent(this, waitingRoom.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra("key", key);
-        intent.putExtra("user", username);
-        startActivity(intent);
-        finish();
+                }
+                @Override
+                public void onCancelled(DatabaseError firebaseError) {
+                }
+            });
+            Intent intent = new Intent(this, waitingRoom.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("key", key);
+            intent.putExtra("user", username);
+            startActivity(intent);
+            finish();
+        }
     }
 
     public void join2PlayerGame(View view) {
         etUsername = (EditText) findViewById(R.id.editText_username);
-        username = etUsername.getText().toString();
-
-        database.child("games").orderByChild("nPlayers").equalTo(2).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                key = "0";
-                Room room = new Room();
-                for (DataSnapshot child: snapshot.getChildren()) {
-                    room = child.getValue(Room.class);
-                    if (!child.exists()) {
-                        errorMessage.setText("Room Unavailable.");
-                    }
-                    else if (room.gameStarted == true){
-                        errorMessage.setText(null);
-                        continue;
-                    }
-                    else {
-                        errorMessage.setText(null);
-                        key = child.getKey();
-                        HashMap<String, HashMap<String, Object>> players = room.players;
-                        HashMap<String, Object> user = new HashMap<>();
-                        user.put("score", 0);
-                        user.put("cards", new ArrayList<Card>());
-                        players.put(username, user);
-                        database.child("games").child(key).child("players").setValue(players);
-                        break;
-                    }
-                }
-
-            }
-            @Override
-            public void onCancelled(DatabaseError firebaseError) {
-            }
-        });
-        if (key.equals("0")){
-            errorMessage.setText("Room Unavailable.");
+        errorMessage = (TextView) findViewById(R.id.textView_errorMessage);
+        if (etUsername.getText().toString().equals("")) {
+            errorMessage.setText("Please enter user name.");
         }
         else {
             errorMessage.setText(null);
-            Intent intent = new Intent(this, waitingRoom.class);
-            intent.putExtra("key", key);
-            intent.putExtra("user", username);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            finish();
+            username = etUsername.getText().toString();
+            database.child("games").orderByChild("nPlayers").equalTo(2).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    key = "0";
+                    Room room = new Room();
+                    for (DataSnapshot child: snapshot.getChildren()) {
+                        room = child.getValue(Room.class);
+                        if (!child.exists()) {
+                            errorMessage.setText("Room Unavailable.");
+                        }
+                        else if (room.gameStarted == true){
+                            errorMessage.setText(null);
+                            continue;
+                        }
+                        else {
+                            errorMessage.setText(null);
+                            key = child.getKey();
+                            HashMap<String, HashMap<String, Object>> players = room.players;
+                            HashMap<String, Object> user = new HashMap<>();
+                            user.put("score", 0);
+                            user.put("cards", new ArrayList<Card>());
+                            players.put(username, user);
+                            database.child("games").child(key).child("players").setValue(players);
+                            break;
+                        }
+                    }
+
+                }
+                @Override
+                public void onCancelled(DatabaseError firebaseError) {
+                }
+            });
+            if (key.equals("0")){
+                errorMessage.setText("Room Unavailable.");
+            }
+            else {
+                errorMessage.setText(null);
+                Intent intent = new Intent(this, waitingRoom.class);
+                intent.putExtra("key", key);
+                intent.putExtra("user", username);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                finish();
+            }
         }
     }
 
     public void join4PlayerGame(View view) {
         etUsername = (EditText) findViewById(R.id.editText_username);
-        username = etUsername.getText().toString();
-
-        database.child("games").orderByChild("nPlayers").equalTo(4).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                key = "0";
-                Room room = new Room();
-                for (DataSnapshot child: snapshot.getChildren()) {
-                    room = child.getValue(Room.class);
-                    if (!child.exists()) {
-                        errorMessage.setText("Room Unavailable.");
-                    }
-                    else if (room.gameStarted == true){
-                        errorMessage.setText(null);
-                        continue;
-                    }
-                    else {
-                        errorMessage.setText(null);
-                        key = child.getKey();
-                        HashMap<String, HashMap<String, Object>> players = room.players;
-                        HashMap<String, Object> user = new HashMap<>();
-                        user.put("score", 0);
-                        user.put("cards", new ArrayList<Card>());
-                        players.put(username, user);
-                        database.child("games").child(key).child("players").setValue(players);
-                        break;
-                    }
-                }
-
-            }
-            @Override
-            public void onCancelled(DatabaseError firebaseError) {
-            }
-        });
-        if (key.equals("0")){
-            errorMessage.setText("Room Unavailable.");
+        errorMessage = (TextView) findViewById(R.id.textView_errorMessage);
+        if (etUsername.getText().toString().equals("")) {
+            errorMessage.setText("Please enter user name.");
         }
         else {
             errorMessage.setText(null);
-            Intent intent = new Intent(this, waitingRoom.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra("key", key);
-            intent.putExtra("user", username);
-            startActivity(intent);
-            finish();
+            username = etUsername.getText().toString();
+            database.child("games").orderByChild("nPlayers").equalTo(4).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    key = "0";
+                    Room room = new Room();
+                    for (DataSnapshot child: snapshot.getChildren()) {
+                        room = child.getValue(Room.class);
+                        if (!child.exists()) {
+                            errorMessage.setText("Room Unavailable.");
+                        }
+                        else if (room.gameStarted == true){
+                            errorMessage.setText(null);
+                            continue;
+                        }
+                        else {
+                            errorMessage.setText(null);
+                            key = child.getKey();
+                            HashMap<String, HashMap<String, Object>> players = room.players;
+                            HashMap<String, Object> user = new HashMap<>();
+                            user.put("score", 0);
+                            user.put("cards", new ArrayList<Card>());
+                            players.put(username, user);
+                            database.child("games").child(key).child("players").setValue(players);
+                            break;
+                        }
+                    }
+
+                }
+                @Override
+                public void onCancelled(DatabaseError firebaseError) {
+                }
+            });
+            if (key.equals("0")){
+                errorMessage.setText("Room Unavailable.");
+            }
+            else {
+                errorMessage.setText(null);
+                Intent intent = new Intent(this, waitingRoom.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("key", key);
+                intent.putExtra("user", username);
+                startActivity(intent);
+                finish();
+            }
         }
     }
 
