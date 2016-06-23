@@ -160,7 +160,8 @@ public class createMultiRoom extends AppCompatActivity {
         username = etUsername.getText().toString();
         key = "0";
         for (String k : allRooms.keySet()) {
-            if (allRooms.get(k).roomName().equals(roomName) && allRooms.get(k).gameStarted() == false) {
+            if (allRooms.get(k).roomName().equals(roomName) && allRooms.get(k).gameStarted() == false
+                    && allRooms.get(k).gameEnded() == false && allRooms.get(k).players().size() < allRooms.get(k).nPlayers()) {
                 key = k;
                 break;
             }
@@ -199,7 +200,8 @@ public class createMultiRoom extends AppCompatActivity {
         username = etUsername.getText().toString();
         key = "0";
         for (String k : allRooms.keySet()) {
-            if (allRooms.get(k).nPlayers() == 2 && allRooms.get(k).gameStarted() == false) {
+            if (allRooms.get(k).nPlayers() == 2 && allRooms.get(k).gameStarted() == false
+                    && allRooms.get(k).gameEnded() == false && allRooms.get(k).players().size() < 2) {
                 key = k;
                 break;
             }
@@ -239,7 +241,8 @@ public class createMultiRoom extends AppCompatActivity {
         username = etUsername.getText().toString();
         key = "0";
         for (String k : allRooms.keySet()) {
-            if (allRooms.get(k).nPlayers() == 4 && allRooms.get(k).gameStarted() == false) {
+            if (allRooms.get(k).nPlayers() == 4 && allRooms.get(k).gameStarted() == false
+                    && allRooms.get(k).gameEnded() == false && allRooms.get(k).players().size() < 4) {
                 key = k;
                 break;
             }

@@ -57,7 +57,6 @@ public class waitingRoom extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Get room object and use the values to update the UI
                 room = dataSnapshot.getValue(Room.class);
-                // ...
             }
 
             @Override
@@ -69,9 +68,16 @@ public class waitingRoom extends AppCompatActivity {
 
     public void leaveRoom(View view){
         //remove user name from database
-        players = new HashMap<String, HashMap<String, Object>> (room.players());
-        players.remove(username);
-        roomDataRef.child("players").setValue(players);
+        if (room.nPlayers()==1) {
+            //not working
+            //roomDataRef.removeValue();
+            roomDataRef.child("gameEnded").setValue(true);
+        }
+        else {
+            players = new HashMap<String, HashMap<String, Object>>(room.players());
+            players.remove(username);
+            roomDataRef.child("players").setValue(players);
+        }
 
         //adjust to delete room if last player in room
         Intent intent = new Intent(this, MainActivity.class);
