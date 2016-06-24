@@ -73,7 +73,7 @@ public class createMultiRoom extends AppCompatActivity {
             public void run() {
                 doStuff();
             }
-        }, 2700);
+        }, 2000);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.loading_screen);

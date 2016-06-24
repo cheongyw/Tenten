@@ -22,7 +22,8 @@
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/listView"
+        android:id="@+id/listView_players"
+        android:divider="@null"
         android:layout_below="@+id/textView_players"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -58,5 +59,15 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/errorMessage"
+        android:layout_below="@+id/button_start"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:textColor="#cc0000" />
 
 </RelativeLayout>
