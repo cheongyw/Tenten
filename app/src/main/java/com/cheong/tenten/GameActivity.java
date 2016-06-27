@@ -441,7 +441,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         final int index = indexTemp;
         final int indexForSabotage = indexForSabotageTemp;
         final TextView showMessage = (TextView) findViewById(R.id.showMessage);
-        showMessage.setText("COM's turn");
+        showMessage.setText("Opponent's turn");
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {

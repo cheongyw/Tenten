@@ -14,6 +14,13 @@ public class Room {
     public int nPlayers;
     public String roomName;
     public HashMap<String, HashMap<String, Object>> players;
+    public String[] turnArray;
+    public int turnNo;
+    public ArrayList<Integer> drawnCards;
+    public boolean suddendeathMode;
+    public int suddendeathCount;
+    public int winCondition;
+
 
     public Room(){}
 
@@ -22,6 +29,12 @@ public class Room {
         gameEnded = false;
         nPlayers = nUsers;
         roomName = name;
+        turnArray = new String[nUsers];
+        turnNo = 0;
+        drawnCards = new ArrayList<Integer>();
+        suddendeathMode = false;
+        suddendeathCount = 2;
+        winCondition = 0;
 
         players = new HashMap<String, HashMap<String, Object>>();
         HashMap<String, Object> creator = new HashMap<String, Object>();
@@ -37,6 +50,7 @@ public class Room {
         result.put("gameEnded", gameEnded);
         result.put("nPlayers", nPlayers);
         result.put("players", players);
+        result.put("turnNo", turnNo);
 
         return result;
     }
@@ -57,5 +71,34 @@ public class Room {
     public HashMap<String, HashMap<String, Object>> players(){
         return players;
     }
+    public String[] turnArray() {return turnArray;}
+    public int turnNo() {return turnNo;}
+    public ArrayList<Integer> drawnCards() {return drawnCards;}
+    public boolean suddendeathMode() {return suddendeathMode;}
+    public int suddendeathCount() {return suddendeathCount;}
+    public int winCondition() {return winCondition;}
+
+
+    //setters
+    public void setGameStarted(boolean bool) {gameStarted = bool;}
+    public void setGameEnded(boolean bool) {gameEnded = bool;}
+    public void setPlayers(HashMap<String, HashMap<String, Object>> newPlayers) {
+        players = newPlayers;
+    }
+    public void setTurnArray(String[] newArray) {turnArray = newArray;}
+    public void nextTurn() {
+        if (nPlayers == 2) {
+            if (turnNo == 0) {turnNo = 1;}
+            else {turnNo = 0;}
+        }
+        else if (nPlayers == 4) {
+            if (turnNo == 3) {turnNo = 0;}
+            else {turnNo += 1;}
+        }
+    }
+    public void setDrawnCards(ArrayList<Integer> allDrawn) {drawnCards = allDrawn;}
+    public void setSuddenDeathMode(boolean bool) {suddendeathMode = bool;}
+    public void minusSuddenDeathCount(){suddendeathCount -= 1;}
+    public void setWinCondition(int i){winCondition = i;}
 
 }

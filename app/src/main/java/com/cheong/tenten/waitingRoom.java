@@ -13,7 +13,6 @@ import android.widget.ListView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -110,7 +109,6 @@ public class waitingRoom extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
-
     public void startRoom(View view){
         //check if number of players match
         //if no, set msg visibility
@@ -120,17 +118,33 @@ public class waitingRoom extends AppCompatActivity {
             errorMessage.setText("Not enough players.");
         }
         else if (room.nPlayers() == 2){ //split into another if else here for 2p and 4p
+            String[] turnArray = new String[2];
+            int i = 0;
+            for (String player : room.players().keySet()){
+                turnArray[i] = player;
+                i +=1;
+            }
+
             Intent intent = new Intent(this, MultiGameActivity.class);
             intent.putExtra("key", key);
             intent.putExtra("user", username);
+            intent.putExtra("turnOrder", turnArray);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             finish();
         }
         else {
+            String[] turnArray = new String[4];
+            int i = 0;
+            for (String player : room.players().keySet()){
+                turnArray[i] = player;
+                i +=1;
+            }
+
             Intent intent = new Intent(this, MultiGameActivity4P.class);
             intent.putExtra("key", key);
             intent.putExtra("user", username);
+            intent.putExtra("turnOrder", turnArray);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
             finish();
