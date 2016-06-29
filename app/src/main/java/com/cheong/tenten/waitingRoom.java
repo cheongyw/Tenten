@@ -57,11 +57,16 @@ public class waitingRoom extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Get room object and use the values to update the UI
                 room = dataSnapshot.getValue(Room.class);
-                values.clear();
-                for (String player : room.players().keySet()) {
-                    values.add(player);
-                }
-                adapter.notifyDataSetChanged();
+                //if (room.gameStarted() == true) {
+
+                //}
+                //else {
+                    values.clear();
+                    for (String player : room.players().keySet()) {
+                        values.add(player);
+                    }
+                    adapter.notifyDataSetChanged();
+                //}
             }
 
             @Override
