@@ -27,18 +27,30 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/start_multi_game"
-        android:onClick="createRoom"
+        android:layout_above="@+id/howToPlayButton"
+        android:layout_marginBottom="30dp"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        android:onClick="createRoom"/>
 
     <Button
         android:id="@+id/howToPlayButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/playMultiButton"
-        android:layout_marginTop="30dp"
+        android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:text="@string/how_to_play"
         android:onClick="howToPlay"/>
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:name="com.cheong.tenten.LoginFragment"
+        tools:layout="@layout/login_fragment"
+        android:layout_below="@+id/howToPlayButton"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>
