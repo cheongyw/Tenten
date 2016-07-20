@@ -20,6 +20,7 @@ public class Room {
     public boolean suddendeathMode;
     public int suddendeathCount;
     public int winCondition;
+    public ArrayList<Boolean> readytoStart;
 
 
     public Room(){}
@@ -35,6 +36,8 @@ public class Room {
         suddendeathMode = false;
         suddendeathCount = 2;
         winCondition = 0;
+        readytoStart = new ArrayList<Boolean>();
+        readytoStart.add(false); //dummy so it will not disappear in database
 
         players = new HashMap<String, HashMap<String, Object>>();
         HashMap<String, Object> creator = new HashMap<String, Object>();
@@ -77,6 +80,7 @@ public class Room {
     public boolean suddendeathMode() {return suddendeathMode;}
     public int suddendeathCount() {return suddendeathCount;}
     public int winCondition() {return winCondition;}
+    public ArrayList<Boolean> readytoStart() {return readytoStart;}
 
 
     //setters
@@ -100,5 +104,6 @@ public class Room {
     public void setSuddenDeathMode(boolean bool) {suddendeathMode = bool;}
     public void minusSuddenDeathCount(){suddendeathCount -= 1;}
     public void setWinCondition(int i){winCondition = i;}
+    public void playerReady() {readytoStart.add(true);}
 
 }

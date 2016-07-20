@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class waitingRoom extends AppCompatActivity {
 
@@ -41,6 +42,8 @@ public class waitingRoom extends AppCompatActivity {
     private ArrayList<String> values;
     private ArrayAdapter<String> adapter;
 
+    private final static Random random = new Random();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,16 +60,16 @@ public class waitingRoom extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Get room object and use the values to update the UI
                 room = dataSnapshot.getValue(Room.class);
-                //if (room.gameStarted() == true) {
-
-                //}
-                //else {
+                if (room.gameStarted() == true) {
+                    movetoGame();
+                }
+                else {
                     values.clear();
                     for (String player : room.players().keySet()) {
                         values.add(player);
                     }
                     adapter.notifyDataSetChanged();
-                //}
+                }
             }
 
             @Override
@@ -122,37 +125,91 @@ public class waitingRoom extends AppCompatActivity {
             errorMessage = (TextView) findViewById(R.id.errorMessage);
             errorMessage.setText("Not enough players.");
         }
-        else if (room.nPlayers() == 2){ //split into another if else here for 2p and 4p
+        else if (room.nPlayers() == 2){ //2p
             String[] turnArray = new String[2];
-            int i = 0;
+            int x = 0;
             for (String player : room.players().keySet()){
-                turnArray[i] = player;
-                i +=1;
+                turnArray[x] = player;
+                x +=1;
             }
 
-            Intent intent = new Intent(this, MultiGameActivity.class);
-            intent.putExtra("key", key);
-            intent.putExtra("user", username);
-            intent.putExtra("turnOrder", turnArray);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            finish();
+            ArrayList<Integer> drawnCards = new ArrayList<Integer>();
+            ArrayList<HashMap<String, Object>> playerArray = new ArrayList<HashMap<String, Object>>();
+            for (int i = 0;i<2;i++) {
+                int score = 0;
+                ArrayList<Card> cards = new ArrayList<Card>();
+                for (int j = 0; j < 4; j++) {
+                    int value = random.nextInt(52);
+                    while (drawnCards.contains(value)) {
+                        value = random.nextInt(52);
+                    }
+                    Card card = new Card(value);
+                    score += card.getValue();
+                    cards.add(card);
+                    drawnCards.add(value);
+                }
+
+                HashMap<String, Object> player = new HashMap<String, Object>();
+                player.put("score", score);
+                player.put("cards", cards);
+                playerArray.add(player);
+            }
+            Map<String, Object> childUpdates = new HashMap<String, Object>();
+            childUpdates.put("/gameStarted", true);
+            for (int i = 0;i<2;i++) {
+                childUpdates.put("/players/"+turnArray[i], playerArray.get(i));
+            }
+            childUpdates.put("/turnArray", turnArray);
+            childUpdates.put("/drawnCards", drawnCards);
+            roomDataRef.updateChildren(childUpdates);
         }
-        else {
+        else { //4p
             String[] turnArray = new String[4];
-            int i = 0;
+            int x = 0;
             for (String player : room.players().keySet()){
-                turnArray[i] = player;
-                i +=1;
+                turnArray[x] = player;
+                x +=1;
             }
 
-            Intent intent = new Intent(this, MultiGameActivity4P.class);
-            intent.putExtra("key", key);
-            intent.putExtra("user", username);
-            intent.putExtra("turnOrder", turnArray);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(intent);
-            finish();
+            ArrayList<Integer> drawnCards = new ArrayList<Integer>();
+            ArrayList<HashMap<String, Object>> playerArray = new ArrayList<HashMap<String, Object>>();
+            for (int i = 0;i<4;i++) {
+                int score = 0;
+                ArrayList<Card> cards = new ArrayList<Card>();
+                for (int j = 0; j < 4; j++) {
+                    int value = random.nextInt(52);
+                    while (drawnCards.contains(value)) {
+                        value = random.nextInt(52);
+                    }
+                    Card card = new Card(value);
+                    score += card.getValue();
+                    cards.add(card);
+                    drawnCards.add(value);
+                }
+
+                HashMap<String, Object> player = new HashMap<String, Object>();
+                player.put("score", score);
+                player.put("cards", cards);
+                playerArray.add(player);
+            }
+            Map<String, Object> childUpdates = new HashMap<String, Object>();
+            childUpdates.put("/gameStarted", true);
+            for (int i = 0;i<4;i++) {
+                childUpdates.put("/players/"+turnArray[i], playerArray.get(i));
+            }
+            childUpdates.put("/turnArray", turnArray);
+            childUpdates.put("/drawnCards", drawnCards);
+            roomDataRef.updateChildren(childUpdates);
         }
+    }
+
+    public void movetoGame() {
+        Intent intent = new Intent(this, MultiGameActivity.class);
+        intent.putExtra("key", key);
+        intent.putExtra("user", username);
+        //intent.putExtra("turnOrder", turnArray);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
     }
 }

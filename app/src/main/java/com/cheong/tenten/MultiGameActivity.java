@@ -59,6 +59,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
     private ValueEventListener roomListener;
     private Room room;
     private int turnNo;
+    private boolean ready;
 
     private final static Random random = new Random();
 
@@ -72,14 +73,9 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
         Intent intent = getIntent();
         key = intent.getStringExtra("key");
         username = intent.getStringExtra("user");
-        turnArray = intent.getStringArrayExtra("turnOrder");
         roomDataRef = FirebaseDatabase.getInstance().getReference().child("games").child(key);
         otherNameText = (TextView) findViewById(R.id.otherScoreStaticText);
-        if (turnArray[0].equals(username)) {
-            otherNameText.setText(turnArray[1]);
-        } else {
-            otherNameText.setText(turnArray[0]);
-        }
+        ready = false;
 
         useAbility = (Button) findViewById(R.id.useAbility);
         drawButton = (ImageButton) findViewById(R.id.drawButton);
@@ -108,34 +104,35 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Get room object and use the values to update the UI
                 room = dataSnapshot.getValue(Room.class);
-                TextView showMessage = (TextView)findViewById(R.id.showMessage);
-                if (room.gameStarted() == false) {
-                    if (turnArray[turnNo].equals(username)) {
-                        for (int i = 4; i < 6; i++) {
-                            boxIsEmpty[i] = true;
-                            boxCards[i] = null;
-                        }
-                        for (int j = 0; j < 4; j++) {
-                            int value = random.nextInt(52);
-                            while (drawnCards.contains(value)) {
-                                value = random.nextInt(52);
-                            }
-                            Card card = new Card(value);
-                            boxImages[j].setImageResource(card.getImage());
-                            boxImages[j].setVisibility(View.VISIBLE);
-                            boxIsEmpty[j] = false;
-                            boxCards[j] = card;
-                            TextView tv = (TextView) findViewById(R.id.playerScore);
-                            updateScore(card.getValue(), tv);
-                            drawnCards.add(value);
-                        }
-                        roomDataRef.child("gameStarted").setValue(true);
-                        //update firebase!
+                TextView showMessage = (TextView) findViewById(R.id.showMessage);
+                if (room.readytoStart().size() < 3 && ready == false) {
+                    if (turnArray[0].equals(username)) {
+                        otherNameText.setText(turnArray[1]);
                     } else {
-                        computerMoves();
-                        showMessage.setText("Drawing cards; please wait.");
+                        otherNameText.setText(turnArray[0]);
                     }
-                } else {
+                    for (int i = 4; i < 6; i++) {
+                        boxIsEmpty[i] = true;
+                        boxCards[i] = null;
+                    }
+                    for (int j = 0; j < 4; j++) {
+                        Card card = room.players().get(username).get("cards").get(j);
+                        boxImages[j].setImageResource(card.getImage());
+                        boxImages[j].setVisibility(View.VISIBLE);
+                        boxIsEmpty[j] = false;
+                        boxCards[j] = card;
+                        TextView tv = (TextView) findViewById(R.id.playerScore);
+                        updateScore(card.getValue(), tv);
+                    }
+                    ready = true;
+                    room.playerReady();
+                    roomDataRef.setValue(room);
+                } else if (room.readytoStart().size() < 3 && ready == true) {
+                    computerMoves();
+                    showMessage.setText("Drawing cards; please wait.");
+                }
+                else{
+                    //check for updates in wincondition etc first and set appropriate updates
                     if (turnArray[turnNo].equals(username)) {
                         showMessage.setText(null);
                         playerTurn();
