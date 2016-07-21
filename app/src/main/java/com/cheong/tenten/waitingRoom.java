@@ -41,6 +41,7 @@ public class waitingRoom extends AppCompatActivity {
     private Room room;
     private ArrayList<String> values;
     private ArrayAdapter<String> adapter;
+    private String[] turnArray;
 
     private final static Random random = new Random();
 
@@ -126,7 +127,7 @@ public class waitingRoom extends AppCompatActivity {
             errorMessage.setText("Not enough players.");
         }
         else if (room.nPlayers() == 2){ //2p
-            String[] turnArray = new String[2];
+            turnArray = new String[2];
             int x = 0;
             for (String player : room.players().keySet()){
                 turnArray[x] = player;
@@ -137,7 +138,7 @@ public class waitingRoom extends AppCompatActivity {
             ArrayList<HashMap<String, Object>> playerArray = new ArrayList<HashMap<String, Object>>();
             for (int i = 0;i<2;i++) {
                 int score = 0;
-                ArrayList<Card> cards = new ArrayList<Card>();
+                ArrayList<Integer> cards = new ArrayList<Integer>();
                 for (int j = 0; j < 4; j++) {
                     int value = random.nextInt(52);
                     while (drawnCards.contains(value)) {
@@ -145,7 +146,7 @@ public class waitingRoom extends AppCompatActivity {
                     }
                     Card card = new Card(value);
                     score += card.getValue();
-                    cards.add(card);
+                    cards.add(value);
                     drawnCards.add(value);
                 }
 
@@ -164,7 +165,7 @@ public class waitingRoom extends AppCompatActivity {
             roomDataRef.updateChildren(childUpdates);
         }
         else { //4p
-            String[] turnArray = new String[4];
+            turnArray = new String[4];
             int x = 0;
             for (String player : room.players().keySet()){
                 turnArray[x] = player;
@@ -175,7 +176,7 @@ public class waitingRoom extends AppCompatActivity {
             ArrayList<HashMap<String, Object>> playerArray = new ArrayList<HashMap<String, Object>>();
             for (int i = 0;i<4;i++) {
                 int score = 0;
-                ArrayList<Card> cards = new ArrayList<Card>();
+                ArrayList<Integer> cards = new ArrayList<Integer>();
                 for (int j = 0; j < 4; j++) {
                     int value = random.nextInt(52);
                     while (drawnCards.contains(value)) {
@@ -183,7 +184,7 @@ public class waitingRoom extends AppCompatActivity {
                     }
                     Card card = new Card(value);
                     score += card.getValue();
-                    cards.add(card);
+                    cards.add(value);
                     drawnCards.add(value);
                 }
 
@@ -207,7 +208,7 @@ public class waitingRoom extends AppCompatActivity {
         Intent intent = new Intent(this, MultiGameActivity.class);
         intent.putExtra("key", key);
         intent.putExtra("user", username);
-        //intent.putExtra("turnOrder", turnArray);
+        intent.putExtra("turnOrder", turnArray);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         finish();

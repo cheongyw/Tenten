@@ -42,7 +42,7 @@ public class Room {
         players = new HashMap<String, HashMap<String, Object>>();
         HashMap<String, Object> creator = new HashMap<String, Object>();
         creator.put("score", 0);
-        creator.put("cards", new ArrayList<Card>());
+        creator.put("cards", new ArrayList<Integer>());
         players.put(creatorName, creator);
 
     }
