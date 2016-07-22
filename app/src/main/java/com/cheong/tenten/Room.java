@@ -54,6 +54,13 @@ public class Room {
         result.put("nPlayers", nPlayers);
         result.put("players", players);
         result.put("turnNo", turnNo);
+        result.put("turnArray", turnArray);
+        result.put("turnNo", turnNo);
+        result.put("drawnCards", drawnCards);
+        result.put("suddendeathMode", suddendeathMode);
+        result.put("suddendeathCount", suddendeathCount);
+        result.put("winCondition", winCondition);
+        result.put("readytoStart", readytoStart);
 
         return result;
     }
