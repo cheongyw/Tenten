@@ -14,7 +14,7 @@ public class Room {
     public int nPlayers;
     public String roomName;
     public HashMap<String, HashMap<String, Object>> players;
-    public String[] turnArray;
+    public ArrayList<String> turnArray;
     public int turnNo;
     public ArrayList<Integer> drawnCards;
     public boolean suddendeathMode;
@@ -30,7 +30,7 @@ public class Room {
         gameEnded = false;
         nPlayers = nUsers;
         roomName = name;
-        turnArray = new String[nUsers];
+        turnArray = new ArrayList<String>(nPlayers);
         turnNo = 0;
         drawnCards = new ArrayList<Integer>();
         suddendeathMode = false;
@@ -82,7 +82,7 @@ public class Room {
         return players;
     }
     public ArrayList<Card> getCards(String name) {return (ArrayList<Card>)players().get(name).get("cards");}
-    public String[] turnArray() {return turnArray;}
+    public ArrayList<String> turnArray() {return turnArray;}
     public int turnNo() {return turnNo;}
     public ArrayList<Integer> drawnCards() {return drawnCards;}
     public boolean suddendeathMode() {return suddendeathMode;}
@@ -98,7 +98,7 @@ public class Room {
         players = newPlayers;
     }
     public void setCards(String name, ArrayList<Card> newCards) {players.get(name).put("cards", newCards);}
-    public void setTurnArray(String[] newArray) {turnArray = newArray;}
+    public void setTurnArray(ArrayList<String> newArray) {turnArray = newArray;}
     public void nextTurn() {
         if (nPlayers == 2) {
             if (turnNo == 0) {turnNo = 1;}

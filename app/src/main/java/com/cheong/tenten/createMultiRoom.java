@@ -97,12 +97,16 @@ public class createMultiRoom extends AppCompatActivity {
             roomName = etCreateName.getText().toString();
             String creator = etUsername.getText().toString();
             Room newRoom = new Room(roomName, 2, creator);
-            Map<String, Object> newRoomValues = newRoom.toMap();
 
+            Map<String, Object> newRoomValues = newRoom.toMap();
             key = database.child("games").push().getKey();
             Map<String, Object> childUpdate = new HashMap<>();
             childUpdate.put("/games/" + key, newRoomValues);
             database.updateChildren(childUpdate);
+            /*
+            DatabaseReference newRoomRef = database.child("games").push();
+            key = newRoomRef.getKey();
+            database.child("games").child(key).setValue(newRoom);*/
 
             Intent intent = new Intent(this, waitingRoom.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

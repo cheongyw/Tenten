@@ -41,7 +41,7 @@ public class waitingRoom extends AppCompatActivity {
     private Room room;
     private ArrayList<String> values;
     private ArrayAdapter<String> adapter;
-    private String[] turnArray;
+    private ArrayList<String> turnArray;
 
     private final static Random random = new Random();
 
@@ -127,10 +127,10 @@ public class waitingRoom extends AppCompatActivity {
             errorMessage.setText("Not enough players.");
         }
         else if (room.nPlayers() == 2){ //2p
-            turnArray = new String[2];
+            turnArray = new ArrayList<String>(2);
             int x = 0;
             for (String player : room.players().keySet()){
-                turnArray[x] = player;
+                turnArray.add(player);
                 x +=1;
             }
 
@@ -157,7 +157,7 @@ public class waitingRoom extends AppCompatActivity {
             }
             HashMap<String, HashMap<String, Object>> newPlayers = new HashMap<String, HashMap<String, Object>>();
             for (int i = 0; i<2;i++) {
-                newPlayers.put(turnArray[i], playerArray.get(i));
+                newPlayers.put(turnArray.get(i), playerArray.get(i));
             }
             /*
             Map<String, Object> childUpdates = new HashMap<String, Object>();
@@ -176,10 +176,10 @@ public class waitingRoom extends AppCompatActivity {
             roomDataRef.setValue(room);
         }
         else { //4p
-            turnArray = new String[4];
+            turnArray = new ArrayList<String>(4);
             int x = 0;
             for (String player : room.players().keySet()){
-                turnArray[x] = player;
+                turnArray.add(player);
                 x +=1;
             }
 
@@ -206,7 +206,7 @@ public class waitingRoom extends AppCompatActivity {
             }
             HashMap<String, HashMap<String, Object>> newPlayers = new HashMap<String, HashMap<String, Object>>();
             for (int i = 0; i<4;i++) {
-                newPlayers.put(turnArray[i], playerArray.get(i));
+                newPlayers.put(turnArray.get(i), playerArray.get(i));
             }
             /*
             Map<String, Object> childUpdates = new HashMap<String, Object>();

@@ -57,7 +57,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
     private String key;
     private String username;
     private String otherName;
-    private String[] turnArray;
+    private ArrayList<String> turnArray;
     private ValueEventListener roomListener;
     private Room room;
     private int turnNo;
@@ -75,16 +75,16 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
         Intent intent = getIntent();
         key = intent.getStringExtra("key");
         username = intent.getStringExtra("user");
-        turnArray = intent.getStringArrayExtra("turnOrder");
+        turnArray = intent.getStringArrayListExtra("turnOrder");
         roomDataRef = FirebaseDatabase.getInstance().getReference().child("games").child(key);
         otherNameText = (TextView) findViewById(R.id.otherScoreStaticText);
         ready = false;
-        if (turnArray[0].equals(username)) {
-            otherName = turnArray[1];
-            otherNameText.setText(turnArray[1]);
+        if (turnArray.get(0).equals(username)) {
+            otherName = turnArray.get(1);
+            otherNameText.setText(turnArray.get(1));
         } else {
-            otherName = turnArray[0];
-            otherNameText.setText(turnArray[0]);
+            otherName = turnArray.get(0);
+            otherNameText.setText(turnArray.get(0));
         }
 
         useAbility = (Button) findViewById(R.id.useAbility);
@@ -138,7 +138,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
                     winCondition = 0;
                     ready = true;
                     room.playerReady();
-                    roomDataRef.setValue(room);
+                    roomDataRef.setValue(room.toMap());
                 } else if (room.readytoStart().size() < 3 && ready == true) {
                     computerMoves();
                     showMessage.setText("Drawing cards; please wait.");
@@ -168,12 +168,12 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
                     }
 
                     turnNo = room.turnNo();
-                    if (turnArray[turnNo].equals(username)) {
+                    if (turnArray.get(turnNo).equals(username)) {
                         showMessage.setText(null);
                         playerTurn();
                     } else {
                         computerMoves();
-                        showMessage.setText(turnArray[turnNo]+"'s turn.");
+                        showMessage.setText(turnArray.get(turnNo)+"'s turn.");
                     }
 
                 }
@@ -240,7 +240,8 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
             drawnCards.add(value);
             room.setDrawnCards(drawnCards);
             if (drawnCards.size() == 52) {
-                roomDataRef.setValue(room);
+                room.nextTurn();
+                roomDataRef.setValue(room.toMap());
             } else {
                 if (howMany != 1) {
                     howMany--;
@@ -248,13 +249,16 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
                 } else {
                     if (suddendeathCount == 0) {
                         room.minusSuddenDeathCount();
-                        roomDataRef.setValue(room);
+                        room.nextTurn();
+                        roomDataRef.setValue(room.toMap());
                     } else if (suddendeathMode) {
                         suddendeathCount--;
                         room.minusSuddenDeathCount();
-                        roomDataRef.setValue(room);
+                        room.nextTurn();
+                        roomDataRef.setValue(room.toMap());
                     } else {
-                        roomDataRef.setValue(room);
+                        room.nextTurn();
+                        roomDataRef.setValue(room.toMap());
                     }
                 }
             }
@@ -270,7 +274,8 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
             drawnCards.add(value);
             room.setDrawnCards(drawnCards);
             if (drawnCards.size() == 52) {
-                roomDataRef.setValue(room);
+                room.nextTurn();
+                roomDataRef.setValue(room.toMap());
             } else {
                 if (howMany != 1) {
                     howMany--;
@@ -278,13 +283,16 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
                 } else {
                     if (suddendeathCount == 0) {
                         room.minusSuddenDeathCount();
-                        roomDataRef.setValue(room);
+                        room.nextTurn();
+                        roomDataRef.setValue(room.toMap());
                     } else if (suddendeathMode) {
                         suddendeathCount--;
                         room.minusSuddenDeathCount();
-                        roomDataRef.setValue(room);
+                        room.nextTurn();
+                        roomDataRef.setValue(room.toMap());
                     } else {
-                        roomDataRef.setValue(room);
+                        room.nextTurn();
+                        roomDataRef.setValue(room.toMap());
                     }
                 }
             }
@@ -300,7 +308,8 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
             drawnCards.add(value);
             room.setDrawnCards(drawnCards);
             if (drawnCards.size() == 52) {
-                roomDataRef.setValue(room);
+                room.nextTurn();
+                roomDataRef.setValue(room.toMap());
             } else {
                 if (howMany != 1) {
                     howMany--;
@@ -308,13 +317,16 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
                 } else {
                     if (suddendeathCount == 0) {
                         room.minusSuddenDeathCount();
-                        roomDataRef.setValue(room);
+                        room.nextTurn();
+                        roomDataRef.setValue(room.toMap());
                     } else if (suddendeathMode) {
                         suddendeathCount--;
                         room.minusSuddenDeathCount();
-                        roomDataRef.setValue(room);
+                        room.nextTurn();
+                        roomDataRef.setValue(room.toMap());
                     } else {
-                        roomDataRef.setValue(room);
+                        room.nextTurn();
+                        roomDataRef.setValue(room.toMap());
                     }
                 }
             }
@@ -330,7 +342,8 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
             drawnCards.add(value);
             room.setDrawnCards(drawnCards);
             if (drawnCards.size() == 52) {
-                roomDataRef.setValue(room);
+                room.nextTurn();
+                roomDataRef.setValue(room.toMap());
             } else {
                 if (howMany != 1) {
                     howMany--;
@@ -338,13 +351,16 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
                 } else {
                     if (suddendeathCount == 0) {
                         room.minusSuddenDeathCount();
-                        roomDataRef.setValue(room);
+                        room.nextTurn();
+                        roomDataRef.setValue(room.toMap());
                     } else if (suddendeathMode) {
                         suddendeathCount--;
                         room.minusSuddenDeathCount();
-                        roomDataRef.setValue(room);
+                        room.nextTurn();
+                        roomDataRef.setValue(room.toMap());
                     } else {
-                        roomDataRef.setValue(room);
+                        room.nextTurn();
+                        roomDataRef.setValue(room.toMap());
                     }
                 }
             }
@@ -360,7 +376,8 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
             drawnCards.add(value);
             room.setDrawnCards(drawnCards);
             if (drawnCards.size() == 52) {
-                roomDataRef.setValue(room);
+                room.nextTurn();
+                roomDataRef.setValue(room.toMap());
             } else {
                 if (howMany != 1) {
                     howMany--;
@@ -368,13 +385,16 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
                 } else {
                     if (suddendeathCount == 0) {
                         room.minusSuddenDeathCount();
-                        roomDataRef.setValue(room);
+                        room.nextTurn();
+                        roomDataRef.setValue(room.toMap());
                     } else if (suddendeathMode) {
                         suddendeathCount--;
                         room.minusSuddenDeathCount();
-                        roomDataRef.setValue(room);
+                        room.nextTurn();
+                        roomDataRef.setValue(room.toMap());
                     } else {
-                        roomDataRef.setValue(room);
+                        room.nextTurn();
+                        roomDataRef.setValue(room.toMap());
                     }
                 }
             }
@@ -390,7 +410,8 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
             drawnCards.add(value);
             room.setDrawnCards(drawnCards);
             if (drawnCards.size() == 52) {
-                roomDataRef.setValue(room);
+                room.nextTurn();
+                roomDataRef.setValue(room.toMap());
             } else {
                 if (howMany != 1) {
                     howMany--;
@@ -398,13 +419,16 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
                 } else {
                     if (suddendeathCount == 0) {
                         room.minusSuddenDeathCount();
-                        roomDataRef.setValue(room);
+                        room.nextTurn();
+                        roomDataRef.setValue(room.toMap());
                     } else if (suddendeathMode) {
                         suddendeathCount--;
                         room.minusSuddenDeathCount();
-                        roomDataRef.setValue(room);
+                        room.nextTurn();
+                        roomDataRef.setValue(room.toMap());
                     } else {
-                        roomDataRef.setValue(room);
+                        room.nextTurn();
+                        roomDataRef.setValue(room.toMap());
                     }
                 }
             }
@@ -510,7 +534,8 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
                     boxImages[i].setClickable(false);
                 }
                 if (drawnCards.size() == 52) {
-                    roomDataRef.setValue(room);
+                    room.nextTurn();
+                    roomDataRef.setValue(room.toMap());
                 } else {
                     if (howMany != 1) {
                         int temp = howMany;
@@ -519,13 +544,16 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
                     } else {
                         if (suddendeathCount == 0) {
                             room.minusSuddenDeathCount();
-                            roomDataRef.setValue(room);
+                            room.nextTurn();
+                            roomDataRef.setValue(room.toMap());
                         } else if (suddendeathMode) {
                             suddendeathCount--;
                             room.minusSuddenDeathCount();
-                            roomDataRef.setValue(room);
+                            room.nextTurn();
+                            roomDataRef.setValue(room.toMap());
                         } else {
-                            roomDataRef.setValue(room);
+                            room.nextTurn();
+                            roomDataRef.setValue(room.toMap());
                         }
                     }
                 }
@@ -554,7 +582,8 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
                         boxImages[i].setClickable(false);
                     }
                     if (drawnCards.size() == 52) {
-                        roomDataRef.setValue(room);
+                        room.nextTurn();
+                        roomDataRef.setValue(room.toMap());
                     } else {
                         if (howMany != 1) {
                             int temp = howMany;
@@ -563,13 +592,16 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
                         } else {
                             if (suddendeathCount == 0) {
                                 room.minusSuddenDeathCount();
-                                roomDataRef.setValue(room);
+                                room.nextTurn();
+                                roomDataRef.setValue(room.toMap());
                             } else if (suddendeathMode) {
                                 suddendeathCount--;
                                 room.minusSuddenDeathCount();
-                                roomDataRef.setValue(room);
+                                room.nextTurn();
+                                roomDataRef.setValue(room.toMap());
                             } else {
-                                roomDataRef.setValue(room);
+                                room.nextTurn();
+                                roomDataRef.setValue(room.toMap());
                             }
                         }
                     }
@@ -677,13 +709,16 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
         boxCards[boxNumber] = null;
         if (suddendeathCount == 0) {
             room.minusSuddenDeathCount();
-            roomDataRef.setValue(room);
+            room.nextTurn();
+            roomDataRef.setValue(room.toMap());
         } else if (suddendeathMode) {
             suddendeathCount--;
             room.minusSuddenDeathCount();
-            roomDataRef.setValue(room);
+            room.nextTurn();
+            roomDataRef.setValue(room.toMap());
         } else {
-            roomDataRef.setValue(room);
+            room.nextTurn();
+            roomDataRef.setValue(room.toMap());
         }
     }
 
@@ -720,13 +755,16 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
         boxCards[boxNumber] = null;
         if (suddendeathCount == 0) {
             room.minusSuddenDeathCount();
-            roomDataRef.setValue(room);
+            room.nextTurn();
+            roomDataRef.setValue(room.toMap());
         } else if (suddendeathMode) {
             suddendeathCount--;
             room.minusSuddenDeathCount();
-            roomDataRef.setValue(room);
+            room.nextTurn();
+            roomDataRef.setValue(room.toMap());
         } else {
-            roomDataRef.setValue(room);
+            room.nextTurn();
+            roomDataRef.setValue(room.toMap());
         }
     }
 
@@ -768,13 +806,16 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
         boxCards[boxNumber] = null;
         if (suddendeathCount == 0) {
             room.minusSuddenDeathCount();
-            roomDataRef.setValue(room);
+            room.nextTurn();
+            roomDataRef.setValue(room.toMap());
         } else if (suddendeathMode) {
             suddendeathCount--;
             room.minusSuddenDeathCount();
-            roomDataRef.setValue(room);
+            room.nextTurn();
+            roomDataRef.setValue(room.toMap());
         } else {
-            roomDataRef.setValue(room);
+            room.nextTurn();
+            roomDataRef.setValue(room.toMap());
         }
     }
 
@@ -793,13 +834,16 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
         boxCards[boxNumber] = null;
         if (suddendeathCount == 0) {
             room.minusSuddenDeathCount();
-            roomDataRef.setValue(room);
+            room.nextTurn();
+            roomDataRef.setValue(room.toMap());
         } else if (suddendeathMode) {
             suddendeathCount--;
             room.minusSuddenDeathCount();
-            roomDataRef.setValue(room);
+            room.nextTurn();
+            roomDataRef.setValue(room.toMap());
         } else {
-            roomDataRef.setValue(room);
+            room.nextTurn();
+            roomDataRef.setValue(room.toMap());
         }
     }
 
@@ -816,7 +860,8 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
         room.setCards(username, ownCards);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
-        roomDataRef.setValue(room);
+        room.nextTurn();
+        roomDataRef.setValue(room.toMap());
     }
 
     private void sabotage(int boxNumber) {
@@ -834,13 +879,16 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
         boxCards[boxNumber] = null;
         if (suddendeathCount == 0) {
             room.minusSuddenDeathCount();
-            roomDataRef.setValue(room);
+            room.nextTurn();
+            roomDataRef.setValue(room.toMap());
         } else if (suddendeathMode) {
             suddendeathCount--;
             room.minusSuddenDeathCount();
-            roomDataRef.setValue(room);
+            room.nextTurn();
+            roomDataRef.setValue(room.toMap());
         } else {
-            roomDataRef.setValue(room);
+            room.nextTurn();
+            roomDataRef.setValue(room.toMap());
         }
     }
 }
