@@ -138,7 +138,7 @@ public class waitingRoom extends AppCompatActivity {
             ArrayList<HashMap<String, Object>> playerArray = new ArrayList<HashMap<String, Object>>();
             for (int i = 0;i<2;i++) {
                 int score = 0;
-                ArrayList<Integer> cards = new ArrayList<Integer>();
+                ArrayList<Card> cards = new ArrayList<Card>();
                 for (int j = 0; j < 4; j++) {
                     int value = random.nextInt(52);
                     while (drawnCards.contains(value)) {
@@ -146,7 +146,7 @@ public class waitingRoom extends AppCompatActivity {
                     }
                     Card card = new Card(value);
                     score += card.getValue();
-                    cards.add(value);
+                    cards.add(card);
                     drawnCards.add(value);
                 }
 
@@ -155,6 +155,11 @@ public class waitingRoom extends AppCompatActivity {
                 player.put("cards", cards);
                 playerArray.add(player);
             }
+            HashMap<String, HashMap<String, Object>> newPlayers = new HashMap<String, HashMap<String, Object>>();
+            for (int i = 0; i<2;i++) {
+                newPlayers.put(turnArray[i], playerArray.get(i));
+            }
+            /*
             Map<String, Object> childUpdates = new HashMap<String, Object>();
             childUpdates.put("/gameStarted", true);
             for (int i = 0;i<2;i++) {
@@ -162,7 +167,13 @@ public class waitingRoom extends AppCompatActivity {
             }
             childUpdates.put("/turnArray", turnArray);
             childUpdates.put("/drawnCards", drawnCards);
-            roomDataRef.updateChildren(childUpdates);
+            roomDataRef.updateChildren(childUpdates);*/
+
+            room.setGameStarted(true);
+            room.setPlayers(newPlayers);
+            room.setTurnArray(turnArray);
+            room.setDrawnCards(drawnCards);
+            roomDataRef.setValue(room);
         }
         else { //4p
             turnArray = new String[4];
@@ -176,7 +187,7 @@ public class waitingRoom extends AppCompatActivity {
             ArrayList<HashMap<String, Object>> playerArray = new ArrayList<HashMap<String, Object>>();
             for (int i = 0;i<4;i++) {
                 int score = 0;
-                ArrayList<Integer> cards = new ArrayList<Integer>();
+                ArrayList<Card> cards = new ArrayList<Card>();
                 for (int j = 0; j < 4; j++) {
                     int value = random.nextInt(52);
                     while (drawnCards.contains(value)) {
@@ -184,7 +195,7 @@ public class waitingRoom extends AppCompatActivity {
                     }
                     Card card = new Card(value);
                     score += card.getValue();
-                    cards.add(value);
+                    cards.add(card);
                     drawnCards.add(value);
                 }
 
@@ -193,6 +204,11 @@ public class waitingRoom extends AppCompatActivity {
                 player.put("cards", cards);
                 playerArray.add(player);
             }
+            HashMap<String, HashMap<String, Object>> newPlayers = new HashMap<String, HashMap<String, Object>>();
+            for (int i = 0; i<4;i++) {
+                newPlayers.put(turnArray[i], playerArray.get(i));
+            }
+            /*
             Map<String, Object> childUpdates = new HashMap<String, Object>();
             childUpdates.put("/gameStarted", true);
             for (int i = 0;i<4;i++) {
@@ -200,7 +216,13 @@ public class waitingRoom extends AppCompatActivity {
             }
             childUpdates.put("/turnArray", turnArray);
             childUpdates.put("/drawnCards", drawnCards);
-            roomDataRef.updateChildren(childUpdates);
+            roomDataRef.updateChildren(childUpdates);*/
+
+            room.setGameStarted(true);
+            room.setPlayers(newPlayers);
+            room.setTurnArray(turnArray);
+            room.setDrawnCards(drawnCards);
+            roomDataRef.setValue(room);
         }
     }
 
