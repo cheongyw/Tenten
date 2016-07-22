@@ -24,7 +24,9 @@ import java.util.Random;
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
 
     // UI components
+    private TextView round;
     private Button useAbility;
+    private Button continueButton;
     private ImageButton drawButton;
     private ImageView boxImage0;
     private ImageView boxImage1;
@@ -39,7 +41,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private boolean suddendeathMode;
     private int suddendeathCount;
     private int winCondition;
-    private boolean gameEnded;
+    private int currentRound;
+    private int playerPoints;
+    private int compPoints;
 
     private final static Random random = new Random();
 
@@ -50,52 +54,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        useAbility = (Button) findViewById(R.id.useAbility);
-        drawButton = (ImageButton) findViewById(R.id.drawButton);
-        boxImage0 = (ImageView) findViewById(R.id.boxImage0);
-        boxImage1 = (ImageView) findViewById(R.id.boxImage1);
-        boxImage2 = (ImageView) findViewById(R.id.boxImage2);
-        boxImage3 = (ImageView) findViewById(R.id.boxImage3);
-        boxImage4 = (ImageView) findViewById(R.id.boxImage4);
-        boxImage5 = (ImageView) findViewById(R.id.boxImage5);
-
-        boxImages = new ImageView[]{boxImage0, boxImage1, boxImage2, boxImage3, boxImage4, boxImage5};
-        boxIsEmpty = new boolean[6];
-        boxCards = new Card[6];
-        drawButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!gameEnded) {
-                    drawCard(1);
-                }
-            }
-            });
-        useAbility.setOnClickListener(this);
-        computerCards = new ArrayList<Card>();
-        drawnCards = new ArrayList<Integer>();
-        suddendeathMode = false;
-        suddendeathCount = 2;
-        winCondition = 0;
-        gameEnded = false;
-
-        for (int i = 4; i < 6; i++) {
-            boxIsEmpty[i] = true;
-            boxCards[i] = null;
-        }
-        for (int j = 0; j < 4; j++) {
-            int value = random.nextInt(52);
-            while(drawnCards.contains(value)){
-                value = random.nextInt(52);
-            }
-            Card card = new Card(value);
-            boxImages[j].setImageResource(card.getImage());
-            boxIsEmpty[j] = false;
-            boxCards[j] = card;
-            TextView tv = (TextView)findViewById(R.id.playerScore);
-            updateScore(card.getValue(), tv);
-            drawnCards.add(value);
-        }
-        computerDrawCards(4);
+        currentRound = 1;
+        playerPoints = 0;
+        compPoints = 0;
+        startRound();
     }
 
     @Override
@@ -129,6 +91,72 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         chooseAbility.setCancelable(true);
     }
 
+    private void startRound() {
+
+        round = (TextView) findViewById(R.id.round);
+        useAbility = (Button) findViewById(R.id.useAbility);
+        drawButton = (ImageButton) findViewById(R.id.drawButton);
+        boxImage0 = (ImageView) findViewById(R.id.boxImage0);
+        boxImage1 = (ImageView) findViewById(R.id.boxImage1);
+        boxImage2 = (ImageView) findViewById(R.id.boxImage2);
+        boxImage3 = (ImageView) findViewById(R.id.boxImage3);
+        boxImage4 = (ImageView) findViewById(R.id.boxImage4);
+        boxImage5 = (ImageView) findViewById(R.id.boxImage5);
+        continueButton = (Button) findViewById(R.id.continue_button);
+
+        boxImages = new ImageView[]{boxImage0, boxImage1, boxImage2, boxImage3, boxImage4, boxImage5};
+        boxIsEmpty = new boolean[6];
+        boxCards = new Card[6];
+        computerCards = new ArrayList<>();
+        drawnCards = new ArrayList<>();
+        drawButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawCard(1);
+            }
+        });
+        useAbility.setOnClickListener(this);
+
+        if (currentRound == 1) {
+            round.setText("Round 1");
+        }
+        else if (currentRound == 2) {
+            round.setText("Round 2");
+        }
+        else {
+            round.setText("Round 3");
+        }
+
+        suddendeathMode = false;
+        suddendeathCount = 2;
+        winCondition = 0;
+        drawButton.setImageResource(R.drawable.back);
+        continueButton.setClickable(false);
+        continueButton.setVisibility(View.INVISIBLE);
+
+        for (int i = 4; i < 6; i++) {
+            boxIsEmpty[i] = true;
+            boxCards[i] = null;
+        }
+        TextView tv = (TextView)findViewById(R.id.playerScore);
+        tv.setText("0");
+        TextView comptv = (TextView)findViewById(R.id.computerScore);
+        comptv.setText("0");
+        for (int j = 0; j < 4; j++) {
+            int value = random.nextInt(52);
+            while(drawnCards.contains(value)){
+                value = random.nextInt(52);
+            }
+            Card card = new Card(value);
+            boxImages[j].setImageResource(card.getImage());
+            boxIsEmpty[j] = false;
+            boxCards[j] = card;
+            updateScore(card.getValue(), tv);
+            drawnCards.add(value);
+        }
+        computerDrawCards(4);
+    }
+
     private void drawCard(int howMany) {
         TextView showMessage = (TextView)findViewById(R.id.showMessage);
         showMessage.setText(null);
@@ -147,7 +175,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             updateScore(card.getValue(), tv);
             drawnCards.add(value);
             if (drawnCards.size()==52) {
-                endGame();
+                endRound();
             }else {
                 if (howMany != 1) {
                     howMany--;
@@ -155,7 +183,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 else {
                     if (suddendeathCount == 0) {
-                        endGame();
+                        endRound();
                     }
                     else if (suddendeathMode) {
                         suddendeathCount--;
@@ -175,7 +203,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             updateScore(card.getValue(), tv);
             drawnCards.add(value);
             if (drawnCards.size()==52) {
-                endGame();
+                endRound();
             }else {
                 if (howMany != 1) {
                     howMany--;
@@ -183,7 +211,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 else {
                     if (suddendeathCount == 0) {
-                        endGame();
+                        endRound();
                     }
                     else if (suddendeathMode) {
                         suddendeathCount--;
@@ -203,7 +231,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             updateScore(card.getValue(), tv);
             drawnCards.add(value);
             if (drawnCards.size()==52) {
-                endGame();
+                endRound();
             }else {
                 if (howMany != 1) {
                     howMany--;
@@ -211,7 +239,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 else {
                     if (suddendeathCount == 0) {
-                        endGame();
+                        endRound();
                     }
                     else if (suddendeathMode) {
                         suddendeathCount--;
@@ -231,7 +259,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             updateScore(card.getValue(), tv);
             drawnCards.add(value);
             if (drawnCards.size()==52) {
-                endGame();
+                endRound();
             }else {
                 if (howMany != 1) {
                     howMany--;
@@ -239,7 +267,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 else {
                     if (suddendeathCount == 0) {
-                        endGame();
+                        endRound();
                     }
                     else if (suddendeathMode) {
                         suddendeathCount--;
@@ -259,7 +287,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             updateScore(card.getValue(), tv);
             drawnCards.add(value);
             if (drawnCards.size()==52) {
-                endGame();
+                endRound();
             }else {
                 if (howMany != 1) {
                     howMany--;
@@ -267,7 +295,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 else {
                     if (suddendeathCount == 0) {
-                        endGame();
+                        endRound();
                     }
                     else if (suddendeathMode) {
                         suddendeathCount--;
@@ -287,7 +315,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             updateScore(card.getValue(), tv);
             drawnCards.add(value);
             if (drawnCards.size()==52) {
-                endGame();
+                endRound();
             }
             else {
                 if (howMany != 1) {
@@ -296,7 +324,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 else {
                     if (suddendeathCount == 0) {
-                        endGame();
+                        endRound();
                     }
                     else if (suddendeathMode) {
                         suddendeathCount--;
@@ -345,7 +373,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     boxImages[i].setClickable(false);
                 }
                 if (drawnCards.size()==52) {
-                    endGame();
+                    endRound();
                 }
                 else {
                     if (howMany != 1) {
@@ -355,7 +383,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     else {
                         if (suddendeathCount == 0) {
-                            endGame();
+                            endRound();
                         }
                         else if (suddendeathMode) {
                             suddendeathCount--;
@@ -386,7 +414,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                         boxImages[i].setClickable(false);
                     }
                     if (drawnCards.size()==52) {
-                        endGame();
+                        endRound();
                     }
                     else {
                         if (howMany != 1) {
@@ -396,7 +424,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                         }
                         else {
                             if (suddendeathCount == 0) {
-                                endGame();
+                                endRound();
                             }
                             else if (suddendeathMode) {
                                 suddendeathCount--;
@@ -474,7 +502,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
         drawnCards.add(value);
         if (drawnCards.size() == 52) {
-            endGame();
+            endRound();
         }
         else {
             if (howMany != 1) {
@@ -483,7 +511,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             }
             else {
                 if (suddendeathCount == 0) {
-                    endGame();
+                    endRound();
                 }
                 else if (suddendeathMode) {
                     suddendeathCount--;
@@ -551,8 +579,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void endGame() {
-        gameEnded = true;
+    private void endRound() {
         drawButton.setImageResource(R.drawable.empty);
         drawButton.setClickable(false);
         useAbility.setClickable(false);
@@ -560,28 +587,63 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         int playerScore = Integer.parseInt(playertv.getText().toString());
         TextView comptv = (TextView)findViewById(R.id.computerScore);
         int compScore = Integer.parseInt(comptv.getText().toString());
-        AlertDialog.Builder outcome = new AlertDialog.Builder(this);
         if (winCondition == 0) {
             if (playerScore > compScore) {
-                outcome.setMessage("You win!");
+                playerPoints+=2;
             }
             else if (playerScore == compScore) {
-                outcome.setMessage("It's a tie!");
+                playerPoints++;
+                compPoints++;
             }
             else {
-                outcome.setMessage("You lose!");
+                compPoints+=2;
             }
         }
         else if (winCondition == 1) {
             if (playerScore < compScore) {
-                outcome.setMessage("You win!");
+                playerPoints+=2;
             }
             else if (playerScore == compScore) {
-                outcome.setMessage("It's a tie!");
+                playerPoints++;
+                compPoints++;
             }
             else {
-                outcome.setMessage("You lose!");
+                compPoints+=2;
             }
+        }
+        AlertDialog.Builder outcome = new AlertDialog.Builder(this);
+        outcome.setTitle("Points after this round");
+        String message = "You: " +String.valueOf(playerPoints)+"\n"+"\n"+"Computer: "+String.valueOf(compPoints);
+        outcome.setMessage(message);
+        outcome.setCancelable(true);
+        outcome.show();
+        continueButton.setClickable(true);
+        continueButton.setVisibility(View.VISIBLE);
+        continueButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (currentRound==3) {
+                    endGame();
+                }
+                else {
+                    currentRound++;
+                    setContentView(R.layout.activity_game);
+                    startRound();
+                }
+            }
+        });
+    }
+
+    private void endGame() {
+        AlertDialog.Builder outcome = new AlertDialog.Builder(this);
+        if (playerPoints > compPoints) {
+            outcome.setMessage("You win!");
+        }
+        else if (playerPoints == compPoints) {
+            outcome.setMessage("It's a tie!");
+        }
+        else {
+            outcome.setMessage("You lose!");
         }
         outcome.setCancelable(true);
         outcome.show();
@@ -605,9 +667,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }, 6000);
         }
-        else if (boxCards[boxNumber].getAbility() == "Sudden death: Game ends next round") {
+        else if (boxCards[boxNumber].getAbility() == "Sudden death: Game ends next turn") {
             Intent intent = new Intent(this, ExplosiveActivity.class);
-            intent.putExtra("Message", "Sudden death" + "\n" + "Game ends next round");
+            intent.putExtra("Message", "Sudden death" + "\n" + "Game ends next turn");
             startActivity(intent);
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
@@ -690,7 +752,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
         if (suddendeathCount == 0) {
-            endGame();
+            endRound();
         }
         else if (suddendeathMode) {
             suddendeathCount--;
@@ -729,7 +791,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
         if (suddendeathCount == 0) {
-            endGame();
+            endRound();
         }
         else if (suddendeathMode) {
             suddendeathCount--;
@@ -775,7 +837,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
         if (suddendeathCount == 0) {
-            endGame();
+            endRound();
         }
         else if (suddendeathMode) {
             suddendeathCount--;
@@ -797,7 +859,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
         if (suddendeathCount == 0) {
-            endGame();
+            endRound();
         }
         else if (suddendeathMode) {
             suddendeathCount--;
@@ -831,7 +893,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
         if (suddendeathCount == 0) {
-            endGame();
+            endRound();
         }
         else if (suddendeathMode) {
             suddendeathCount--;
@@ -858,9 +920,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }, 6000);
         }
-        else if (card.getAbility() == "Sudden death: Game ends next round") {
+        else if (card.getAbility() == "Sudden death: Game ends next turn") {
             Intent intent = new Intent(this, ExplosiveActivity.class);
-            intent.putExtra("Message", "Sudden death" + "\n" + "Game ends next round");
+            intent.putExtra("Message", "Sudden death" + "\n" + "Game ends next turn");
             startActivity(intent);
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
@@ -923,7 +985,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         if (canBeDiscarded.size() == 0) {
             if (suddendeathCount == 0) {
-                endGame();
+                endRound();
             }
             else if (suddendeathMode) {
                 suddendeathCount--;
@@ -965,7 +1027,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                         boxCards[toDiscardList.get(m)] = null;
                     }
                     if (suddendeathCount == 0) {
-                        endGame();
+                        endRound();
                     }
                     else if (suddendeathMode) {
                         suddendeathCount--;
@@ -1003,7 +1065,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
         if (suddendeathCount == 0) {
-            endGame();
+            endRound();
         }
         else if (suddendeathMode) {
             suddendeathCount--;
@@ -1033,7 +1095,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         if (allCards.size() == 0) {
             if (suddendeathCount == 0) {
-                endGame();
+                endRound();
             }
             else if (suddendeathMode) {
                 suddendeathCount--;
@@ -1076,7 +1138,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                         boxCards[toDiscardList.get(m)] = null;
                     }
                     if (suddendeathCount == 0) {
-                        endGame();
+                        endRound();
                     }
                     else if (suddendeathMode) {
                         suddendeathCount--;
@@ -1100,7 +1162,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         layout.setBackgroundColor(Color.RED);
         winCondition = 0;
         if (suddendeathCount == 0) {
-            endGame();
+            endRound();
         }
         else if (suddendeathMode) {
             suddendeathCount--;
@@ -1130,7 +1192,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         layout.setBackgroundColor(Color.BLACK);
         winCondition = 1;
         if (suddendeathCount == 0) {
-            endGame();
+            endRound();
         }
         else if (suddendeathMode) {
             suddendeathCount--;

@@ -25,7 +25,9 @@ import java.util.Random;
 public class GameActivity4P extends AppCompatActivity implements View.OnClickListener {
 
     // UI components
+    private TextView round;
     private Button useAbility;
+    private Button continueButton;
     private ImageButton drawButton;
     private ImageView boxImage0;
     private ImageView boxImage1;
@@ -43,7 +45,11 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
     private boolean suddendeathMode;
     private int suddendeathCount;
     private int winCondition;
-    private boolean gameEnded;
+    private int currentRound;
+    private int playerPoints;
+    private int com1Points;
+    private int com2Points;
+    private int com3Points;
 
     private final static Random random = new Random();
 
@@ -54,81 +60,12 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_4p);
 
-        useAbility = (Button) findViewById(R.id.useAbility4P);
-        drawButton = (ImageButton) findViewById(R.id.drawButton4P);
-        boxImage0 = (ImageView) findViewById(R.id.boxImage0_4P);
-        boxImage1 = (ImageView) findViewById(R.id.boxImage1_4P);
-        boxImage2 = (ImageView) findViewById(R.id.boxImage2_4P);
-        boxImage3 = (ImageView) findViewById(R.id.boxImage3_4P);
-        boxImage4 = (ImageView) findViewById(R.id.boxImage4_4P);
-        boxImage5 = (ImageView) findViewById(R.id.boxImage5_4P);
-
-        boxImages = new ImageView[]{boxImage0, boxImage1, boxImage2, boxImage3, boxImage4, boxImage5};
-        boxIsEmpty = new boolean[6];
-        boxCards = new Card[6];
-        drawButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!gameEnded) {
-                    drawCard(1);
-                }
-            }
-        });
-        useAbility.setOnClickListener(this);
-        com1_Cards = new ArrayList<>();
-        com2_Cards = new ArrayList<>();
-        com3_Cards = new ArrayList<>();
-        comCards = new ArrayList[3];
-        comCards[0] = com1_Cards;
-        comCards[1] = com2_Cards;
-        comCards[2] = com3_Cards;
-        drawnCards = new ArrayList<Integer>();
-        suddendeathMode = false;
-        suddendeathCount = 4;
-        winCondition = 0;
-        gameEnded = false;
-
-        for (int i = 4; i < 6; i++) {
-            boxIsEmpty[i] = true;
-            boxCards[i] = null;
-        }
-        for (int j = 0; j < 4; j++) {
-            int value = random.nextInt(52);
-            while(drawnCards.contains(value)){
-                value = random.nextInt(52);
-            }
-            Card card = new Card(value);
-            boxImages[j].setImageResource(card.getImage());
-            boxIsEmpty[j] = false;
-            boxCards[j] = card;
-            TextView tv = (TextView)findViewById(R.id.playerScore4P);
-            updateScore(card.getValue(), tv);
-            drawnCards.add(value);
-        }
-        for (int which = 0; which < 3; which++) {
-            for (int k = 0; k < 4; k++) {
-                int value = random.nextInt(52);
-                while (drawnCards.contains(value)) {
-                    value = random.nextInt(52);
-                }
-                Card card = new Card(value);
-                ArrayList<Card> computerCards = comCards[which];
-                computerCards.add(card);
-                TextView tv;
-                if (which == 0) {
-                    tv = (TextView) findViewById(R.id.com1Score);
-                }
-                else if (which == 1) {
-                    tv = (TextView) findViewById(R.id.com2Score);
-                }
-                else {
-                    tv = (TextView) findViewById(R.id.com3Score);
-                }
-                updateScore(card.getValue(), tv);
-                drawnCards.add(value);
-            }
-        }
-        playerTurn();
+        currentRound = 1;
+        playerPoints = 0;
+        com1Points = 0;
+        com2Points = 0;
+        com3Points = 0;
+        startRound();
     }
 
     @Override
@@ -162,6 +99,106 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
         chooseAbility.setCancelable(true);
     }
 
+    private void startRound() {
+
+        round = (TextView) findViewById(R.id.round_4P);
+        useAbility = (Button) findViewById(R.id.useAbility4P);
+        drawButton = (ImageButton) findViewById(R.id.drawButton4P);
+        boxImage0 = (ImageView) findViewById(R.id.boxImage0_4P);
+        boxImage1 = (ImageView) findViewById(R.id.boxImage1_4P);
+        boxImage2 = (ImageView) findViewById(R.id.boxImage2_4P);
+        boxImage3 = (ImageView) findViewById(R.id.boxImage3_4P);
+        boxImage4 = (ImageView) findViewById(R.id.boxImage4_4P);
+        boxImage5 = (ImageView) findViewById(R.id.boxImage5_4P);
+        continueButton = (Button) findViewById(R.id.continue_button_4P);
+
+        drawButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawCard(1);
+            }
+        });
+        useAbility.setOnClickListener(this);
+
+        boxImages = new ImageView[]{boxImage0, boxImage1, boxImage2, boxImage3, boxImage4, boxImage5};
+        boxIsEmpty = new boolean[6];
+        boxCards = new Card[6];
+        com1_Cards = new ArrayList<>();
+        com2_Cards = new ArrayList<>();
+        com3_Cards = new ArrayList<>();
+        comCards = new ArrayList[3];
+        comCards[0] = com1_Cards;
+        comCards[1] = com2_Cards;
+        comCards[2] = com3_Cards;
+        drawnCards = new ArrayList<>();
+
+        if (currentRound == 1) {
+            round.setText("Round 1");
+        }
+        else if (currentRound == 2) {
+            round.setText("Round 2");
+        }
+        else {
+            round.setText("Round 3");
+        }
+
+        suddendeathMode = false;
+        suddendeathCount = 4;
+        winCondition = 0;
+        drawButton.setImageResource(R.drawable.back);
+        continueButton.setClickable(false);
+        continueButton.setVisibility(View.INVISIBLE);
+
+        for (int i = 4; i < 6; i++) {
+            boxIsEmpty[i] = true;
+            boxCards[i] = null;
+        }
+        TextView tv = (TextView)findViewById(R.id.playerScore4P);
+        tv.setText("0");
+        for (int j = 0; j < 4; j++) {
+            int value = random.nextInt(52);
+            while(drawnCards.contains(value)){
+                value = random.nextInt(52);
+            }
+            Card card = new Card(value);
+            boxImages[j].setImageResource(card.getImage());
+            boxIsEmpty[j] = false;
+            boxCards[j] = card;
+            updateScore(card.getValue(), tv);
+            drawnCards.add(value);
+        }
+        TextView comptv1 = (TextView)findViewById(R.id.com1Score);
+        comptv1.setText("0");
+        TextView comptv2 = (TextView)findViewById(R.id.com2Score);
+        comptv2.setText("0");
+        TextView comptv3 = (TextView)findViewById(R.id.com3Score);
+        comptv3.setText("0");
+        for (int which = 0; which < 3; which++) {
+            for (int k = 0; k < 4; k++) {
+                int value = random.nextInt(52);
+                while (drawnCards.contains(value)) {
+                    value = random.nextInt(52);
+                }
+                Card card = new Card(value);
+                ArrayList<Card> computerCards = comCards[which];
+                computerCards.add(card);
+                TextView comptv;
+                if (which == 0) {
+                    comptv = (TextView) findViewById(R.id.com1Score);
+                }
+                else if (which == 1) {
+                    comptv = (TextView) findViewById(R.id.com2Score);
+                }
+                else {
+                    comptv = (TextView) findViewById(R.id.com3Score);
+                }
+                updateScore(card.getValue(), comptv);
+                drawnCards.add(value);
+            }
+        }
+        playerTurn();
+    }
+
     private void drawCard(int howMany) {
         TextView showMessage = (TextView)findViewById(R.id.showMessage4P);
         showMessage.setText(null);
@@ -180,7 +217,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
             updateScore(card.getValue(), tv);
             drawnCards.add(value);
             if (drawnCards.size()==52) {
-                endGame();
+                endRound();
             }else {
                 if (howMany != 1) {
                     howMany--;
@@ -188,7 +225,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
                 }
                 else {
                     if (suddendeathCount == 0) {
-                        endGame();
+                        endRound();
                     }
                     else if (suddendeathMode) {
                         suddendeathCount--;
@@ -208,7 +245,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
             updateScore(card.getValue(), tv);
             drawnCards.add(value);
             if (drawnCards.size()==52) {
-                endGame();
+                endRound();
             }else {
                 if (howMany != 1) {
                     howMany--;
@@ -216,7 +253,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
                 }
                 else {
                     if (suddendeathCount == 0) {
-                        endGame();
+                        endRound();
                     }
                     else if (suddendeathMode) {
                         suddendeathCount--;
@@ -236,7 +273,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
             updateScore(card.getValue(), tv);
             drawnCards.add(value);
             if (drawnCards.size()==52) {
-                endGame();
+                endRound();
             }else {
                 if (howMany != 1) {
                     howMany--;
@@ -244,7 +281,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
                 }
                 else {
                     if (suddendeathCount == 0) {
-                        endGame();
+                        endRound();
                     }
                     else if (suddendeathMode) {
                         suddendeathCount--;
@@ -264,7 +301,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
             updateScore(card.getValue(), tv);
             drawnCards.add(value);
             if (drawnCards.size()==52) {
-                endGame();
+                endRound();
             }else {
                 if (howMany != 1) {
                     howMany--;
@@ -272,7 +309,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
                 }
                 else {
                     if (suddendeathCount == 0) {
-                        endGame();
+                        endRound();
                     }
                     else if (suddendeathMode) {
                         suddendeathCount--;
@@ -292,7 +329,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
             updateScore(card.getValue(), tv);
             drawnCards.add(value);
             if (drawnCards.size()==52) {
-                endGame();
+                endRound();
             }else {
                 if (howMany != 1) {
                     howMany--;
@@ -300,7 +337,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
                 }
                 else {
                     if (suddendeathCount == 0) {
-                        endGame();
+                        endRound();
                     }
                     else if (suddendeathMode) {
                         suddendeathCount--;
@@ -320,7 +357,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
             updateScore(card.getValue(), tv);
             drawnCards.add(value);
             if (drawnCards.size()==52) {
-                endGame();
+                endRound();
             }
             else {
                 if (howMany != 1) {
@@ -329,7 +366,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
                 }
                 else {
                     if (suddendeathCount == 0) {
-                        endGame();
+                        endRound();
                     }
                     else if (suddendeathMode) {
                         suddendeathCount--;
@@ -378,7 +415,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
                     boxImages[i].setClickable(false);
                 }
                 if (drawnCards.size()==52) {
-                    endGame();
+                    endRound();
                 }
                 else {
                     if (howMany != 1) {
@@ -388,7 +425,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
                     }
                     else {
                         if (suddendeathCount == 0) {
-                            endGame();
+                            endRound();
                         }
                         else if (suddendeathMode) {
                             suddendeathCount--;
@@ -419,7 +456,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
                         boxImages[i].setClickable(false);
                     }
                     if (drawnCards.size()==52) {
-                        endGame();
+                        endRound();
                     }
                     else {
                         if (howMany != 1) {
@@ -429,7 +466,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
                         }
                         else {
                             if (suddendeathCount == 0) {
-                                endGame();
+                                endRound();
                             }
                             else if (suddendeathMode) {
                                 suddendeathCount--;
@@ -528,7 +565,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
         }
         drawnCards.add(value);
         if (drawnCards.size() == 52) {
-            endGame();
+            endRound();
         }
         else {
             if (howMany != 1) {
@@ -537,7 +574,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
             }
             else {
                 if (suddendeathCount == 0) {
-                    endGame();
+                    endRound();
                 }
                 else {
                     if (suddendeathMode) {
@@ -619,8 +656,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private void endGame() {
-        gameEnded = true;
+    private void endRound() {
         drawButton.setImageResource(R.drawable.empty);
         drawButton.setClickable(false);
         useAbility.setClickable(false);
@@ -632,8 +668,41 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
         int com2_Score = Integer.parseInt(com2_tv.getText().toString());
         TextView com3_tv = (TextView)findViewById(R.id.com3Score);
         int com3_Score = Integer.parseInt(com3_tv.getText().toString());
+        ArrayList<Integer> scores = new ArrayList<>();
+        scores.add(playerScore);scores.add(com1_Score);scores.add(com2_Score);scores.add(com3_Score);
+        Collections.sort(scores);
+        playerPoints+=scores.indexOf(playerScore);
+        com1Points+=scores.indexOf(com1_Score);
+        com2Points+=scores.indexOf(com2_Score);
+        com3Points+=scores.indexOf(com3_Score);
+
+        AlertDialog.Builder outcome = new AlertDialog.Builder(this);
+        outcome.setTitle("Points after this round");
+        String message = "You: " +String.valueOf(playerPoints)+"\n"+"\n"+"Com 1: "+String.valueOf(com1Points)+"\n"+"\n"+"Com 2: "+String.valueOf(com2Points)+"\n"+"\n"+"Com 3: "+String.valueOf(com3Points);
+        outcome.setMessage(message);
+        outcome.setCancelable(true);
+        outcome.show();
+        continueButton.setClickable(true);
+        continueButton.setVisibility(View.VISIBLE);
+        continueButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (currentRound==3) {
+                    endGame();
+                }
+                else {
+                    currentRound++;
+                    setContentView(R.layout.activity_game_4p);
+                    startRound();
+                }
+            }
+        });
+
+    }
+
+    private void endGame() {
         Hashtable<String, Integer> table = new Hashtable<>();
-        table.put("COM 1",com1_Score);table.put("COM 2",com2_Score);table.put("COM 3",com3_Score);table.put("You",playerScore);
+        table.put("COM 1",com1Points);table.put("COM 2",com2Points);table.put("COM 3",com3Points);table.put("You",playerPoints);
         ArrayList<String> sortedKeys = sortValue(table);
         AlertDialog.Builder outcome = new AlertDialog.Builder(this);
         if (winCondition == 0) {
@@ -693,9 +762,9 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
                 }
             }, 6000);
         }
-        else if (boxCards[boxNumber].getAbility() == "Sudden death: Game ends next round") {
+        else if (boxCards[boxNumber].getAbility() == "Sudden death: Game ends next turn") {
             Intent intent = new Intent(this, ExplosiveActivity.class);
-            intent.putExtra("Message", "Sudden death" + "\n" + "Game ends next round");
+            intent.putExtra("Message", "Sudden death" + "\n" + "Game ends next turn");
             startActivity(intent);
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
@@ -802,7 +871,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
         if (suddendeathCount == 0) {
-            endGame();
+            endRound();
         }
         else if (suddendeathMode) {
             suddendeathCount--;
@@ -844,7 +913,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
         if (suddendeathCount == 0) {
-            endGame();
+            endRound();
         }
         else if (suddendeathMode) {
             suddendeathCount--;
@@ -912,7 +981,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
         if (suddendeathCount == 0) {
-            endGame();
+            endRound();
         }
         else if (suddendeathMode) {
             suddendeathCount--;
@@ -934,7 +1003,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
         if (suddendeathCount == 0) {
-            endGame();
+            endRound();
         }
         else if (suddendeathMode) {
             suddendeathCount--;
@@ -968,7 +1037,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
         if (suddendeathCount == 0) {
-            endGame();
+            endRound();
         }
         else if (suddendeathMode) {
             suddendeathCount--;
@@ -997,9 +1066,9 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
                 }
             }, 6000);
         }
-        else if (card.getAbility() == "Sudden death: Game ends next round") {
+        else if (card.getAbility() == "Sudden death: Game ends next turn") {
             Intent intent = new Intent(this, ExplosiveActivity.class);
-            intent.putExtra("Message", "Sudden death" + "\n" + "Game ends next round");
+            intent.putExtra("Message", "Sudden death" + "\n" + "Game ends next turn");
             startActivity(intent);
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
@@ -1136,7 +1205,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
             h.postDelayed(new Runnable() {
                 public void run() {
                     if (suddendeathCount == 0) {
-                        endGame();
+                        endRound();
                     }
                     else {
                         if (suddendeathMode) {
@@ -1186,7 +1255,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
                         boxCards[toDiscardList.get(m)] = null;
                     }
                     if (suddendeathCount == 0) {
-                        endGame();
+                        endRound();
                     }
                     else {
                         if (suddendeathMode) {
@@ -1256,7 +1325,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
             }
         }
         if (suddendeathCount == 0) {
-            endGame();
+            endRound();
         }
         else {
             if (suddendeathMode) {
@@ -1353,7 +1422,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
             h.postDelayed(new Runnable() {
                 public void run() {
                     if (suddendeathCount == 0) {
-                        endGame();
+                        endRound();
                     }
                     else {
                         if (suddendeathMode) {
@@ -1404,7 +1473,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
                         boxCards[toDiscardList.get(m)] = null;
                     }
                     if (suddendeathCount == 0) {
-                        endGame();
+                        endRound();
                     }
                     else {
                         if (suddendeathMode) {
@@ -1443,7 +1512,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
         layout.setBackgroundColor(Color.RED);
         winCondition = 0;
         if (suddendeathCount == 0) {
-            endGame();
+            endRound();
         }
         else {
             if (suddendeathMode) {
@@ -1506,7 +1575,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
         layout.setBackgroundColor(Color.BLACK);
         winCondition = 1;
         if (suddendeathCount == 0) {
-            endGame();
+            endRound();
         }
         else {
             if (suddendeathMode) {

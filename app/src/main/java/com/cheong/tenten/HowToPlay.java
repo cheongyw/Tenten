@@ -40,7 +40,7 @@ public class HowToPlay extends AppCompatActivity {
                 " - Nine of hearts and spades: Draw 2 cards.\n" +
                 " - Ten of hearts and spades: Draw 3 cards.\n" +
                 " - Jack of hearts and spades: Opponent discards 2 highest cards.\n" +
-                " - King of hearts: Game ends next round.\n" +
+                " - King of hearts: Game ends next turn.\n" +
                 " - King of spades: Lowest hand wins."
                 ;
 

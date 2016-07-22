@@ -36,7 +36,7 @@ public class Card implements Comparable<Card> {
             m_ability = "Opponent discards 3 highest cards";
         }
         else if (value==38) {
-            m_ability = "Sudden death: Game ends next round";
+            m_ability = "Sudden death: Game ends next turn";
     }
         else if (value==51) {
             m_ability = "Sabotage: Lowest hand wins";
