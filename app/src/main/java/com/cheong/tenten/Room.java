@@ -110,7 +110,7 @@ public class Room {
         }
     }
     public void setDrawnCards(ArrayList<Integer> allDrawn) {drawnCards = allDrawn;}
-    public void setSuddenDeathMode(boolean bool) {suddendeathMode = bool;}
+    public void setSDM(boolean bool) {suddendeathMode = bool;}
     public void minusSuddenDeathCount(){suddendeathCount -= 1;}
     public void setWinCondition(int i){winCondition = i;}
     public void playerReady() {readytoStart.add(true);}

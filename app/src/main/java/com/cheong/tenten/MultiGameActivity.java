@@ -805,7 +805,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
 
     private void suddendeath(int boxNumber) {
         suddendeathMode = true;
-        room.setSuddenDeathMode(true);
+        room.setSDM(true);
         suddendeathCount--;
         room.minusSuddenDeathCount();
 
