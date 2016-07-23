@@ -21,6 +21,9 @@ public class Room {
     public int suddendeathCount;
     public int winCondition;
     public ArrayList<Boolean> readytoStart;
+    public String abilityUser;
+    public boolean deactivateCheck;
+    public ArrayList<Integer> discarded;
 
 
     public Room(){}
@@ -38,6 +41,9 @@ public class Room {
         winCondition = 0;
         readytoStart = new ArrayList<Boolean>();
         readytoStart.add(false); //dummy so it will not disappear in database
+        abilityUser = "";
+        deactivateCheck = false;
+        discarded = new ArrayList<Integer>(); //stores card.getValue()
 
         players = new HashMap<String, HashMap<String, Object>>();
         HashMap<String, Object> creator = new HashMap<String, Object>();
@@ -61,6 +67,9 @@ public class Room {
         result.put("suddendeathCount", suddendeathCount);
         result.put("winCondition", winCondition);
         result.put("readytoStart", readytoStart);
+        result.put("abilityUser", abilityUser);
+        result.put("deactivateCheck", deactivateCheck);
+        result.put("discarded", discarded);
 
         return result;
     }
@@ -89,6 +98,9 @@ public class Room {
     public int suddendeathCount() {return suddendeathCount;}
     public int winCondition() {return winCondition;}
     public ArrayList<Boolean> readytoStart() {return readytoStart;}
+    public String abilityUser() {return abilityUser;}
+    public boolean deactivateCheck() {return deactivateCheck;}
+    public ArrayList<Integer> discarded() {return discarded;}
 
 
     //setters
@@ -114,5 +126,8 @@ public class Room {
     public void minusSuddenDeathCount(){suddendeathCount -= 1;}
     public void setWinCondition(int i){winCondition = i;}
     public void playerReady() {readytoStart.add(true);}
+    public void setAbilityUser(String s) {abilityUser = s;}
+    public void setDeactivateCheck(boolean b) {deactivateCheck = b;}
+    public void setDiscarded(ArrayList<Integer> newDiscarded) {discarded = newDiscarded;}
 
 }

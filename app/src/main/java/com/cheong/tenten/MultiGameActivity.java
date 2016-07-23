@@ -114,7 +114,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Get room object and use the values to update the UI
                 room = dataSnapshot.getValue(Room.class);
-                TextView showMessage = (TextView) findViewById(R.id.showMessage);
+                final TextView showMessage = (TextView) findViewById(R.id.showMessage);
                 if (room.readytoStart().size() < 3 && ready == false) {
                     otherCards = room.getCards(otherName);
                     for (int i = 4; i < 6; i++) {
@@ -131,9 +131,9 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
                         //updateScore(card.getValue(), tv);
                     }
                     TextView tv = (TextView) findViewById(R.id.playerScore);
-                    updateScoreFromFirebase((int)room.players().get(username).get("score"), tv);
+                    updateScoreFromFirebase((int) room.players().get(username).get("score"), tv);
                     TextView comptv = (TextView) findViewById(R.id.otherScore);
-                    updateScoreFromFirebase((int)room.players().get(otherName).get("score"), comptv);
+                    updateScoreFromFirebase((int) room.players().get(otherName).get("score"), comptv);
 
                     winCondition = 0;
                     ready = true;
@@ -142,38 +142,92 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
                 } else if (room.readytoStart().size() < 3 && ready == true) {
                     computerMoves();
                     showMessage.setText("Drawing cards; please wait.");
-                }
-                else {
+                } else {
                     //check for updates in wincondition etc first and set appropriate
                     TextView comptv = (TextView) findViewById(R.id.otherScore);
-                    updateScoreFromFirebase((int)room.players().get(otherName).get("score"), comptv);
+                    updateScoreFromFirebase((int) room.players().get(otherName).get("score"), comptv);
                     otherCards = room.getCards(otherName);
-
                     suddendeathMode = room.suddendeathMode();
                     suddendeathCount = room.suddendeathCount();
                     //gameEnded = room.gameEnded();
                     drawnCards = room.drawnCards();
-                    if (suddendeathCount == -1 || drawnCards.size() == 52) {endGame();}
-                    int newWinCondition = room.winCondition();
-                    if (!(winCondition == newWinCondition)) {
-                        winCondition = newWinCondition;
-                        if (winCondition == 0) {
-                            RelativeLayout layout = (RelativeLayout) findViewById(R.id.gamelayout);
-                            layout.setBackgroundColor(Color.RED);
-                        }
-                        else if (winCondition == 1) {
-                            RelativeLayout layout = (RelativeLayout) findViewById(R.id.gamelayout);
-                            layout.setBackgroundColor(Color.BLACK);
-                        }
+                    if (suddendeathCount == -1 || drawnCards.size() == 52) {
+                        endGame();
                     }
+                    if (dataSnapshot.hasChild("abilityUser") == true && !(room.abilityUser().equals(username))) {
+                        int newWinCondition = room.winCondition();
+                        if (!(winCondition == newWinCondition)) {
+                            winCondition = newWinCondition;
+                            if (winCondition == 0) {
+                                startExplosion("Restoration" + "\n" + "Highest hand wins!");
+                            } else if (winCondition == 1) {
+                                startExplosion("Sabotage" + "\n" + "Lowest hand wins!");
+                            }
+                        } else if (suddendeathCount == 1) {
+                            startExplosion("Sudden death" + "\n" + "Game ends next round");
+                        } else if (room.deactivateCheck() == true) {
+                            //TextView showMessage = (TextView) findViewById(R.id.showMessage);
+                            showMessage.setText(room.abilityUser() + " used Deactivate!");
+                            Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                public void run() {
+                                    showMessage.setText(null);
+                                    for (int i = 0; i < boxCards.length; i++) {
+                                        if (!boxIsEmpty[i]) {
+                                            boxCards[i].deactivate();
+                                        }
+                                    }
+                                }
+                            }, 3000);
+                            room.setDeactivateCheck(false);
+                        } else {
+                            ArrayList<Integer> valuesToDiscard = room.discarded();
+                            ArrayList<Integer> indexesToDiscard = new ArrayList<Integer>();
+                            //add!
+                            //TextView showMessage = (TextView) findViewById(R.id.showMessage);
+                            showMessage.setText(room.abilityUser() + " used Discard!");
+                            Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                public void run() {
+                                }
+                            }, 3000);
+                            showMessage.setText(null);
+                            for (int i = 0; i < boxCards.length; i++) {
+                                if (!boxIsEmpty[i] && valuesToDiscard.contains(boxCards[i].getRank())) {
+                                    indexesToDiscard.add(i);
+                                }
+                            }
+                            for (int i : indexesToDiscard) {
+                                boxImages[i].setImageResource(R.drawable.blast);
+                                final AnimationDrawable a = (AnimationDrawable) boxImages[i].getDrawable();
+                                a.start();
+                            }
+                            TextView tv = (TextView) findViewById(R.id.playerScore);
+                            updateScoreFromFirebase((int) room.players().get(username).get("score"), tv);
+                            handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                public void run() {
 
+                                }
+                            }, 1000);
+                            for (int m = 0; m < indexesToDiscard.size(); m++) {
+                                boxImages[indexesToDiscard.get(m)].clearAnimation();
+                                boxImages[indexesToDiscard.get(m)].setImageResource(R.drawable.empty);
+                                boxIsEmpty[indexesToDiscard.get(m)] = true;
+                                boxCards[indexesToDiscard.get(m)] = null;
+                            }
+                            room.setDiscarded(new ArrayList<Integer>());
+                        }
+                        room.setAbilityUser("");
+                    }
+                    //determine moves
                     turnNo = room.turnNo();
                     if (turnArray.get(turnNo).equals(username)) {
                         showMessage.setText(null);
                         playerTurn();
                     } else {
                         computerMoves();
-                        showMessage.setText(turnArray.get(turnNo)+"'s turn.");
+                        showMessage.setText(turnArray.get(turnNo) + "'s turn.");
                     }
 
                 }
@@ -686,17 +740,22 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
         }, 1000);
 
         if (otherCards.size() > 0) {
+            room.setAbilityUser(username);
             int index = random.nextInt(otherCards.size());
             int valueToDeduct = otherCards.get(index).getValue();
+            ArrayList<Integer> toDiscard = new ArrayList<Integer>();
+            toDiscard.add(otherCards.get(index).getRank());
             otherCards.remove(index);
             TextView tv = (TextView) findViewById(R.id.otherScore);
             updateScore(-valueToDeduct, tv, otherName);
             if (otherCards.size() > 0) {
                 index = random.nextInt(otherCards.size());
                 valueToDeduct = otherCards.get(index).getValue();
+                toDiscard.add(otherCards.get(index).getRank());
                 otherCards.remove(index);
                 updateScore(-valueToDeduct, tv, otherName);
             }
+            room.setDiscarded(toDiscard);
         }
         room.setCards(otherName, otherCards);
 
@@ -739,6 +798,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void deactivate(int boxNumber) {
+        room.setAbilityUser(username);
         if (otherCards.size() > 0) {
             for (int i = 0; i < otherCards.size(); i++) {
                 otherCards.get(i).deactivate();
@@ -783,15 +843,19 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
 
         Collections.sort(otherCards);
         int valueToDeduct;
+        ArrayList<Integer> toDiscard = new ArrayList<Integer>();
         for (int i = 0; i < howMany; i++) {
             if (otherCards.size() > 0) {
+                room.setAbilityUser(username);
                 valueToDeduct = otherCards.get(otherCards.size() - 1).getValue();
+                toDiscard.add(otherCards.get(otherCards.size() - 1).getRank());
                 otherCards.remove(otherCards.size() - 1);
                 room.setCards(otherName, otherCards);
                 TextView tv = (TextView) findViewById(R.id.otherScore);
                 updateScore(-valueToDeduct, tv, otherName);
             }
         }
+        room.setDiscarded(toDiscard);
 
         TextView tv = (TextView) findViewById(R.id.playerScore);
         if (howMany == 2) {
@@ -820,6 +884,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void restoration(int boxNumber) {
+        room.setAbilityUser(username);
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.gamelayout);
         layout.setBackgroundColor(Color.RED);
         winCondition = 0;
@@ -848,6 +913,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void suddendeath(int boxNumber) {
+        room.setAbilityUser(username);
         suddendeathMode = true;
         room.setSDM(true);
         suddendeathCount--;
@@ -865,6 +931,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
     }
 
     private void sabotage(int boxNumber) {
+        room.setAbilityUser(username);
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.gamelayout);
         layout.setBackgroundColor(Color.BLACK);
         winCondition = 1;
@@ -890,5 +957,19 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
             room.nextTurn();
             roomDataRef.setValue(room.toMap());
         }
+    }
+
+    /* -----------Methods for card abilities (Opponent) ------------------------- */
+    private void startExplosion(String message) {
+        Intent intent = new Intent(this, ExplosiveActivity.class);
+        intent.putExtra("Message", message);
+        startActivity(intent);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                RelativeLayout layout = (RelativeLayout) findViewById(R.id.gamelayout);
+                layout.setBackgroundColor(Color.RED);
+            }
+        }, 6000);
     }
 }
