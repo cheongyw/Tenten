@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.ListView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
+import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class waitingRoom extends AppCompatActivity {
+    private static final String TAG = "waitingRoomActivity";
 
     private ListView playerList;
     private TextView errorMessage;
@@ -138,7 +140,7 @@ public class waitingRoom extends AppCompatActivity {
             ArrayList<HashMap<String, Object>> playerArray = new ArrayList<HashMap<String, Object>>();
             for (int i = 0;i<2;i++) {
                 int score = 0;
-                ArrayList<Card> cards = new ArrayList<Card>();
+                ArrayList<Integer> cards = new ArrayList<Integer>();
                 for (int j = 0; j < 4; j++) {
                     int value = random.nextInt(52);
                     while (drawnCards.contains(value)) {
@@ -146,7 +148,7 @@ public class waitingRoom extends AppCompatActivity {
                     }
                     Card card = new Card(value);
                     score += card.getValue();
-                    cards.add(card);
+                    cards.add(value);
                     drawnCards.add(value);
                 }
 
@@ -159,21 +161,21 @@ public class waitingRoom extends AppCompatActivity {
             for (int i = 0; i<2;i++) {
                 newPlayers.put(turnArray.get(i), playerArray.get(i));
             }
-            /*
+
             Map<String, Object> childUpdates = new HashMap<String, Object>();
             childUpdates.put("/gameStarted", true);
             for (int i = 0;i<2;i++) {
-                childUpdates.put("/players/"+turnArray[i], playerArray.get(i));
+                childUpdates.put("/players/"+turnArray.get(i), playerArray.get(i));
             }
             childUpdates.put("/turnArray", turnArray);
             childUpdates.put("/drawnCards", drawnCards);
-            roomDataRef.updateChildren(childUpdates);*/
-
+            roomDataRef.updateChildren(childUpdates);
+            /*
             room.setGameStarted(true);
             room.setPlayers(newPlayers);
             room.setTurnArray(turnArray);
             room.setDrawnCards(drawnCards);
-            roomDataRef.setValue(room);
+            roomDataRef.setValue(room);*/
         }
         else { //4p
             turnArray = new ArrayList<String>(4);
@@ -187,7 +189,7 @@ public class waitingRoom extends AppCompatActivity {
             ArrayList<HashMap<String, Object>> playerArray = new ArrayList<HashMap<String, Object>>();
             for (int i = 0;i<4;i++) {
                 int score = 0;
-                ArrayList<Card> cards = new ArrayList<Card>();
+                ArrayList<Integer> cards = new ArrayList<Integer>();
                 for (int j = 0; j < 4; j++) {
                     int value = random.nextInt(52);
                     while (drawnCards.contains(value)) {
@@ -195,7 +197,7 @@ public class waitingRoom extends AppCompatActivity {
                     }
                     Card card = new Card(value);
                     score += card.getValue();
-                    cards.add(card);
+                    cards.add(value);
                     drawnCards.add(value);
                 }
 
@@ -208,37 +210,38 @@ public class waitingRoom extends AppCompatActivity {
             for (int i = 0; i<4;i++) {
                 newPlayers.put(turnArray.get(i), playerArray.get(i));
             }
-            /*
+
             Map<String, Object> childUpdates = new HashMap<String, Object>();
             childUpdates.put("/gameStarted", true);
             for (int i = 0;i<4;i++) {
-                childUpdates.put("/players/"+turnArray[i], playerArray.get(i));
+                childUpdates.put("/players/"+turnArray.get(i), playerArray.get(i));
             }
             childUpdates.put("/turnArray", turnArray);
             childUpdates.put("/drawnCards", drawnCards);
-            roomDataRef.updateChildren(childUpdates);*/
-
+            roomDataRef.updateChildren(childUpdates);
+            /*
             room.setGameStarted(true);
             room.setPlayers(newPlayers);
             room.setTurnArray(turnArray);
             room.setDrawnCards(drawnCards);
             roomDataRef.setValue(room);
+            */
         }
     }
 
     public void movetoGame() {
         final Intent intent = new Intent(this, MultiGameActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("key", key);
         intent.putExtra("user", username);
         intent.putExtra("turnOrder", turnArray);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             public void run() {
                 startActivity(intent);
                 finish();
             }
-        }, 2000);
+        }, 3000);
 
     }
 }

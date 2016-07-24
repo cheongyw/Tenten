@@ -90,7 +90,7 @@ public class Room {
     public HashMap<String, HashMap<String, Object>> players(){
         return players;
     }
-    public ArrayList<Card> getCards(String name) {return (ArrayList<Card>)players().get(name).get("cards");}
+    public ArrayList<Integer> getCards(String name) {return (ArrayList<Integer>)players().get(name).get("cards");}
     public ArrayList<String> turnArray() {return turnArray;}
     public int turnNo() {return turnNo;}
     public ArrayList<Integer> drawnCards() {return drawnCards;}
@@ -109,7 +109,7 @@ public class Room {
     public void setPlayers(HashMap<String, HashMap<String, Object>> newPlayers) {
         players = newPlayers;
     }
-    public void setCards(String name, ArrayList<Card> newCards) {players.get(name).put("cards", newCards);}
+    public void setCards(String name, ArrayList<Integer> newCards) {players.get(name).put("cards", newCards);}
     public void setTurnArray(ArrayList<String> newArray) {turnArray = newArray;}
     public void nextTurn() {
         if (nPlayers == 2) {

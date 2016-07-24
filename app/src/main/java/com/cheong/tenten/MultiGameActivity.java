@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.util.Log;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
@@ -31,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MultiGameActivity extends AppCompatActivity implements View.OnClickListener {
+    private static final String TAG = "MultiGameActivity";
 
     // UI components
     private TextView otherNameText;
@@ -45,8 +47,8 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
     private ImageView[] boxImages;
     private boolean[] boxIsEmpty;
     private Card[] boxCards;
-    private ArrayList<Card> otherCards;
-    private ArrayList<Card> ownCards;
+    private ArrayList<Integer> otherCards;
+    private ArrayList<Integer> ownCards;
     private boolean suddendeathMode;
     private int suddendeathCount;
     private int winCondition;
@@ -74,6 +76,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
         Intent intent = getIntent();
         key = intent.getStringExtra("key");
         username = intent.getStringExtra("user");
+        System.out.println(username);
         turnArray = intent.getStringArrayListExtra("turnOrder");
         roomDataRef = FirebaseDatabase.getInstance().getReference().child("games").child(key);
         otherNameText = (TextView) findViewById(R.id.otherScoreStaticText);
@@ -131,29 +134,34 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
                         otherName = turnArray.get(0);
                         otherNameText.setText(turnArray.get(0));
                     }
+
                     otherCards = room.getCards(otherName);
                     ownCards = room.getCards(username);
+
+                    //otherCards = (ArrayList<Integer>)dataSnapshot.child("players").child(otherName).child("cards").getValue();
+                    //ownCards = (ArrayList<Integer>)dataSnapshot.child("players").child(username).child("cards").getValue();
                     for (int i = 4; i < 6; i++) {
                         boxIsEmpty[i] = true;
                         boxCards[i] = null;
                     }
 
                     for (int j = 0; j < 4; j++) {
-                        Card card = ownCards.get(j);
+                        Card card = new Card(ownCards.get(j).intValue());
                         boxImages[j].setImageResource(card.getImage());
                         boxImages[j].setVisibility(View.VISIBLE);
                         boxIsEmpty[j] = false;
                         boxCards[j] = card;
                         //updateScore(card.getValue(), tv);
                     }
-                    TextView tv = (TextView) findViewById(R.id.playerScore);
-                    updateScoreFromFirebase((int) room.players().get(username).get("score"), tv);
                     TextView comptv = (TextView) findViewById(R.id.otherScore);
-                    updateScoreFromFirebase((int) room.players().get(otherName).get("score"), comptv);
+                    updateScoreFromFirebase(((Long)room.players().get(otherName).get("score")).intValue(), comptv);
+
+                    TextView tv = (TextView) findViewById(R.id.playerScore);
+                    updateScoreFromFirebase(((Long) room.players().get(username).get("score")).intValue(), tv);
 
                     winCondition = 0;
                     ready = true;
-                    room.playerReady();
+                    //room.playerReady();
                     roomDataRef.setValue(room.toMap());
                 } else if (room.readytoStart().size() < 3 && ready == true) {
                     computerMoves();
@@ -161,7 +169,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
                 } else {
                     //check for updates in wincondition etc first and set appropriate
                     TextView comptv = (TextView) findViewById(R.id.otherScore);
-                    updateScoreFromFirebase((int) room.players().get(otherName).get("score"), comptv);
+                    updateScoreFromFirebase(((Long) room.players().get(otherName).get("score")).intValue(), comptv);
                     otherCards = room.getCards(otherName);
                     suddendeathMode = room.suddendeathMode();
                     suddendeathCount = room.suddendeathCount();
@@ -219,7 +227,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
                                 a.start();
                             }
                             TextView tv = (TextView) findViewById(R.id.playerScore);
-                            updateScoreFromFirebase((int) room.players().get(username).get("score"), tv);
+                            updateScoreFromFirebase(((Long) room.players().get(username).get("score")).intValue(), tv);
                             handler = new Handler();
                             handler.postDelayed(new Runnable() {
                                 public void run() {
@@ -299,7 +307,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
         // Set the image in one of the boxes
         Card card = new Card(value);
         if (boxIsEmpty[0]) {
-            ownCards.add(card);
+            ownCards.add(value);
             room.setCards(username, ownCards);
             boxImage0.setImageResource(card.getImage());
             boxImage0.setVisibility(View.VISIBLE);
@@ -333,7 +341,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
                 }
             }
         } else if (boxIsEmpty[1]) {
-            ownCards.add(card);
+            ownCards.add(value);
             room.setCards(username, ownCards);
             boxImage1.setImageResource(card.getImage());
             boxImage1.setVisibility(View.VISIBLE);
@@ -367,7 +375,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
                 }
             }
         } else if (boxIsEmpty[2]) {
-            ownCards.add(card);
+            ownCards.add(value);
             room.setCards(username, ownCards);
             boxImage2.setImageResource(card.getImage());
             boxImage2.setVisibility(View.VISIBLE);
@@ -401,7 +409,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
                 }
             }
         } else if (boxIsEmpty[3]) {
-            ownCards.add(card);
+            ownCards.add(value);
             room.setCards(username, ownCards);
             boxImage3.setImageResource(card.getImage());
             boxImage3.setVisibility(View.VISIBLE);
@@ -435,7 +443,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
                 }
             }
         } else if (boxIsEmpty[4]) {
-            ownCards.add(card);
+            ownCards.add(value);
             room.setCards(username, ownCards);
             boxImage4.setImageResource(card.getImage());
             boxImage4.setVisibility(View.VISIBLE);
@@ -469,7 +477,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
                 }
             }
         } else if (boxIsEmpty[5]) {
-            ownCards.add(card);
+            ownCards.add(value);
             room.setCards(username, ownCards);
             boxImage5.setImageResource(card.getImage());
             boxImage5.setVisibility(View.VISIBLE);
@@ -636,11 +644,11 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
                 @Override
                 public void onClick(View view) {
                     showMessage.setText(null);
-                    ownCards.remove(boxCards[id]);
+                    ownCards.remove((Integer)boxCards[id].getRank());
                     updateScore(-boxCards[id].getValue(), tv, username);
                     boxCards[id] = card;
                     boxImages[id].setImageResource(card.getImage());
-                    ownCards.add(card);
+                    ownCards.add(card.getRank());
                     room.setCards(username, ownCards);
                     updateScore(card.getValue(), tv, username);
                     drawnCards.add(value);
@@ -758,16 +766,16 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
         if (otherCards.size() > 0) {
             room.setAbilityUser(username);
             int index = random.nextInt(otherCards.size());
-            int valueToDeduct = otherCards.get(index).getValue();
+            int valueToDeduct = new Card(otherCards.get(index)).getValue();
             ArrayList<Integer> toDiscard = new ArrayList<Integer>();
-            toDiscard.add(otherCards.get(index).getRank());
+            toDiscard.add(otherCards.get(index));
             otherCards.remove(index);
             TextView tv = (TextView) findViewById(R.id.otherScore);
             updateScore(-valueToDeduct, tv, otherName);
             if (otherCards.size() > 0) {
                 index = random.nextInt(otherCards.size());
-                valueToDeduct = otherCards.get(index).getValue();
-                toDiscard.add(otherCards.get(index).getRank());
+                valueToDeduct = new Card(otherCards.get(index)).getValue();
+                toDiscard.add(otherCards.get(index));
                 otherCards.remove(index);
                 updateScore(-valueToDeduct, tv, otherName);
             }
@@ -778,7 +786,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
         TextView tv = (TextView) findViewById(R.id.playerScore);
         updateScore(-8, tv, username);
         boxImages[boxNumber].setImageResource(R.drawable.empty);
-        ownCards.remove(boxCards[boxNumber]);
+        ownCards.remove((Integer)boxCards[boxNumber].getRank());
         room.setCards(username, ownCards);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
@@ -805,7 +813,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
             updateScore(-10, tv, username);
         }
         boxImages[boxNumber].setImageResource(R.drawable.empty);
-        ownCards.remove(boxCards[boxNumber]);
+        ownCards.remove((Integer)boxCards[boxNumber].getRank());
         room.setCards(username, ownCards);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
@@ -815,18 +823,19 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
 
     private void deactivate(int boxNumber) {
         room.setAbilityUser(username);
+        /*
         if (otherCards.size() > 0) {
             for (int i = 0; i < otherCards.size(); i++) {
                 otherCards.get(i).deactivate();
             }
         }
-        room.setCards(otherName, otherCards);
+        room.setCards(otherName, otherCards);*/
         room.setDeactivateCheck(true);
 
         TextView tv = (TextView) findViewById(R.id.playerScore);
         updateScore(-1, tv, username);
         boxImages[boxNumber].setImageResource(R.drawable.empty);
-        ownCards.remove(boxCards[boxNumber]);
+        ownCards.remove((Integer)boxCards[boxNumber].getRank());
         room.setCards(username, ownCards);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
@@ -864,8 +873,8 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
         for (int i = 0; i < howMany; i++) {
             if (otherCards.size() > 0) {
                 room.setAbilityUser(username);
-                valueToDeduct = otherCards.get(otherCards.size() - 1).getValue();
-                toDiscard.add(otherCards.get(otherCards.size() - 1).getRank());
+                valueToDeduct = new Card(otherCards.get(otherCards.size() - 1)).getValue();
+                toDiscard.add(otherCards.get(otherCards.size() - 1));
                 otherCards.remove(otherCards.size() - 1);
                 room.setCards(otherName, otherCards);
                 TextView tv = (TextView) findViewById(R.id.otherScore);
@@ -881,7 +890,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
             updateScore(-12, tv, username);
         }
         boxImages[boxNumber].setImageResource(R.drawable.empty);
-        ownCards.remove(boxCards[boxNumber]);
+        ownCards.remove((Integer)boxCards[boxNumber].getRank());
         room.setCards(username, ownCards);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
@@ -910,7 +919,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
         TextView tv = (TextView) findViewById(R.id.playerScore);
         updateScore(-1, tv, username);
         boxImages[boxNumber].setImageResource(R.drawable.empty);
-        ownCards.remove(boxCards[boxNumber]);
+        ownCards.remove((Integer)boxCards[boxNumber].getRank());
         room.setCards(username, ownCards);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
@@ -939,7 +948,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
         TextView tv = (TextView) findViewById(R.id.playerScore);
         updateScore(-13, tv, username);
         boxImages[boxNumber].setImageResource(R.drawable.empty);
-        ownCards.remove(boxCards[boxNumber]);
+        ownCards.remove((Integer)boxCards[boxNumber].getRank());
         room.setCards(username, ownCards);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
@@ -957,7 +966,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
         TextView tv = (TextView) findViewById(R.id.playerScore);
         updateScore(-13, tv, username);
         boxImages[boxNumber].setImageResource(R.drawable.empty);
-        ownCards.remove(boxCards[boxNumber]);
+        ownCards.remove((Integer)boxCards[boxNumber].getRank());
         room.setCards(username, ownCards);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;

@@ -49,11 +49,11 @@ public class MultiGameActivity4P extends AppCompatActivity implements View.OnCli
     private ImageView[] boxImages;
     private boolean[] boxIsEmpty;
     private Card[] boxCards;
-    private ArrayList<Card> com1_Cards;
-    private ArrayList<Card> com2_Cards;
-    private ArrayList<Card> com3_Cards;
-    private ArrayList<Card>[] comCards;
-    private ArrayList<Card> ownCards;
+    private ArrayList<Integer> com1_Cards;
+    private ArrayList<Integer> com2_Cards;
+    private ArrayList<Integer> com3_Cards;
+    private ArrayList<Integer>[] comCards;
+    private ArrayList<Integer> ownCards;
     private boolean suddendeathMode;
     private int suddendeathCount;
     private int winCondition;
@@ -162,7 +162,7 @@ public class MultiGameActivity4P extends AppCompatActivity implements View.OnCli
                     }
                     ownCards = room.getCards(username);
                     for (int j = 0; j < 4; j++) {
-                        Card card = ownCards.get(j);
+                        Card card = new Card(ownCards.get(j));
                         boxImages[j].setImageResource(card.getImage());
                         boxImages[j].setVisibility(View.VISIBLE);
                         boxIsEmpty[j] = false;
@@ -331,7 +331,7 @@ public class MultiGameActivity4P extends AppCompatActivity implements View.OnCli
         // Set the image in one of the boxes
         Card card = new Card(value);
         if (boxIsEmpty[0]) {
-            ownCards.add(card);
+            ownCards.add(value);
             room.setCards(username, ownCards);
             boxImage0.setImageResource(card.getImage());
             boxImage0.setVisibility(View.VISIBLE);
@@ -365,7 +365,7 @@ public class MultiGameActivity4P extends AppCompatActivity implements View.OnCli
                 }
             }
         } else if (boxIsEmpty[1]) {
-            ownCards.add(card);
+            ownCards.add(value);
             room.setCards(username, ownCards);
             boxImage1.setImageResource(card.getImage());
             boxImage1.setVisibility(View.VISIBLE);
@@ -399,7 +399,7 @@ public class MultiGameActivity4P extends AppCompatActivity implements View.OnCli
                 }
             }
         } else if (boxIsEmpty[2]) {
-            ownCards.add(card);
+            ownCards.add(value);
             room.setCards(username, ownCards);
             boxImage2.setImageResource(card.getImage());
             boxImage2.setVisibility(View.VISIBLE);
@@ -433,7 +433,7 @@ public class MultiGameActivity4P extends AppCompatActivity implements View.OnCli
                 }
             }
         } else if (boxIsEmpty[3]) {
-            ownCards.add(card);
+            ownCards.add(value);
             room.setCards(username, ownCards);
             boxImage3.setImageResource(card.getImage());
             boxImage3.setVisibility(View.VISIBLE);
@@ -467,7 +467,7 @@ public class MultiGameActivity4P extends AppCompatActivity implements View.OnCli
                 }
             }
         } else if (boxIsEmpty[4]) {
-            ownCards.add(card);
+            ownCards.add(value);
             room.setCards(username, ownCards);
             boxImage4.setImageResource(card.getImage());
             boxImage4.setVisibility(View.VISIBLE);
@@ -501,7 +501,7 @@ public class MultiGameActivity4P extends AppCompatActivity implements View.OnCli
                 }
             }
         } else if (boxIsEmpty[5]) {
-            ownCards.add(card);
+            ownCards.add(value);
             room.setCards(username, ownCards);
             boxImage5.setImageResource(card.getImage());
             boxImage5.setVisibility(View.VISIBLE);
@@ -697,11 +697,11 @@ public class MultiGameActivity4P extends AppCompatActivity implements View.OnCli
                 @Override
                 public void onClick(View view) {
                     showMessage.setText(null);
-                    ownCards.remove(boxCards[id]);
+                    ownCards.remove((Integer)boxCards[id].getRank());
                     updateScore(-boxCards[id].getValue(), tv, username);
                     boxCards[id] = card;
                     boxImages[id].setImageResource(card.getImage());
-                    ownCards.add(card);
+                    ownCards.add(card.getRank());
                     room.setCards(username, ownCards);
                     updateScore(card.getValue(), tv, username);
                     drawnCards.add(value);
@@ -829,7 +829,7 @@ public class MultiGameActivity4P extends AppCompatActivity implements View.OnCli
         }, 1000);
         ArrayList<Integer> toDiscard = new ArrayList<Integer>();
         for (int which = 0; which < 3; which++) {
-            ArrayList<Card> computerCards = comCards[which];
+            ArrayList<Integer> computerCards = comCards[which];
             String otherName;
             TextView tv;
             if (which == 0) {
@@ -847,14 +847,14 @@ public class MultiGameActivity4P extends AppCompatActivity implements View.OnCli
             if (computerCards.size()>0) {
                 room.setAbilityUser(username);
                 int index = random.nextInt(computerCards.size());
-                int valueToDeduct = computerCards.get(index).getValue();
-                toDiscard.add(computerCards.get(index).getRank());
+                int valueToDeduct = new Card(computerCards.get(index)).getValue();
+                toDiscard.add(computerCards.get(index));
                 computerCards.remove(index);
                 updateScore(-valueToDeduct, tv, otherName);
                 if (computerCards.size()>0) {
                     index = random.nextInt(computerCards.size());
-                    valueToDeduct = computerCards.get(index).getValue();
-                    toDiscard.add(computerCards.get(index).getRank());
+                    valueToDeduct = new Card(computerCards.get(index)).getValue();
+                    toDiscard.add(computerCards.get(index));
                     computerCards.remove(index);
                     updateScore(-valueToDeduct, tv, otherName);
                 }
@@ -866,7 +866,7 @@ public class MultiGameActivity4P extends AppCompatActivity implements View.OnCli
         TextView tv = (TextView) findViewById(R.id.playerScore);
         updateScore(-8, tv, username);
         boxImages[boxNumber].setImageResource(R.drawable.empty);
-        ownCards.remove(boxCards[boxNumber]);
+        ownCards.remove((Integer)boxCards[boxNumber].getRank());
         room.setCards(username, ownCards);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
@@ -893,7 +893,7 @@ public class MultiGameActivity4P extends AppCompatActivity implements View.OnCli
             updateScore(-10, tv, username);
         }
         boxImages[boxNumber].setImageResource(R.drawable.empty);
-        ownCards.remove(boxCards[boxNumber]);
+        ownCards.remove((Integer)boxCards[boxNumber].getRank());
         room.setCards(username, ownCards);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
@@ -904,8 +904,9 @@ public class MultiGameActivity4P extends AppCompatActivity implements View.OnCli
     private void deactivate(int boxNumber) {
         room.setAbilityUser(username);
         room.setDeactivateCheck(true);
+        /*
         for (int which = 0; which < 3; which++) {
-            ArrayList<Card> computerCards = comCards[which];
+            ArrayList<Integer> computerCards = comCards[which];
             String otherName;
             if (which == 0) {
                 otherName = com1Text.getText().toString();
@@ -922,12 +923,12 @@ public class MultiGameActivity4P extends AppCompatActivity implements View.OnCli
                 }
             }
             room.setCards(otherName, computerCards);
-        }
+        }*/
 
         TextView tv = (TextView) findViewById(R.id.playerScore);
         updateScore(-1, tv, username);
         boxImages[boxNumber].setImageResource(R.drawable.empty);
-        ownCards.remove(boxCards[boxNumber]);
+        ownCards.remove((Integer)boxCards[boxNumber].getRank());
         room.setCards(username, ownCards);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
@@ -974,7 +975,7 @@ public class MultiGameActivity4P extends AppCompatActivity implements View.OnCli
         room.setAbilityUser(username);
         ArrayList<Integer> toDiscard = new ArrayList<Integer>();
         for (int which = 0; which < 3; which++) {
-            ArrayList<Card> computerCards = comCards[which];
+            ArrayList<Integer> computerCards = comCards[which];
             TextView tv;
             String otherName;
             if (which == 0) {
@@ -993,8 +994,8 @@ public class MultiGameActivity4P extends AppCompatActivity implements View.OnCli
             int valueToDeduct;
             for (int i = 0; i < howMany; i++) {
                 if (computerCards.size()>0) {
-                    valueToDeduct = computerCards.get(computerCards.size()-1).getValue();
-                    toDiscard.add(computerCards.get(computerCards.size() - 1).getRank());
+                    valueToDeduct = new Card(computerCards.get(computerCards.size()-1)).getValue();
+                    toDiscard.add(computerCards.get(computerCards.size() - 1));
                     computerCards.remove(computerCards.size()-1);
                     room.setCards(otherName, computerCards);
                     updateScore(-valueToDeduct, tv, otherName);
@@ -1010,7 +1011,7 @@ public class MultiGameActivity4P extends AppCompatActivity implements View.OnCli
             updateScore(-12, tv, username);
         }
         boxImages[boxNumber].setImageResource(R.drawable.empty);
-        ownCards.remove(boxCards[boxNumber]);
+        ownCards.remove((Integer)boxCards[boxNumber].getRank());
         room.setCards(username, ownCards);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
@@ -1039,7 +1040,7 @@ public class MultiGameActivity4P extends AppCompatActivity implements View.OnCli
         TextView tv = (TextView) findViewById(R.id.playerScore);
         updateScore(-1, tv, username);
         boxImages[boxNumber].setImageResource(R.drawable.empty);
-        ownCards.remove(boxCards[boxNumber]);
+        ownCards.remove((Integer)boxCards[boxNumber].getRank());
         room.setCards(username, ownCards);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
@@ -1068,7 +1069,7 @@ public class MultiGameActivity4P extends AppCompatActivity implements View.OnCli
         TextView tv = (TextView) findViewById(R.id.playerScore);
         updateScore(-13, tv, username);
         boxImages[boxNumber].setImageResource(R.drawable.empty);
-        ownCards.remove(boxCards[boxNumber]);
+        ownCards.remove((Integer)boxCards[boxNumber].getRank());
         room.setCards(username, ownCards);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
@@ -1086,7 +1087,7 @@ public class MultiGameActivity4P extends AppCompatActivity implements View.OnCli
         TextView tv = (TextView) findViewById(R.id.playerScore);
         updateScore(-13, tv, username);
         boxImages[boxNumber].setImageResource(R.drawable.empty);
-        ownCards.remove(boxCards[boxNumber]);
+        ownCards.remove((Integer)boxCards[boxNumber].getRank());
         room.setCards(username, ownCards);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
