@@ -29,7 +29,7 @@
         android:layout_marginTop="50dp"
         android:editable="false"
         android:text="P2"
-        android:textColor="#ffff00"
+        android:textColor="#191919"
         android:textSize="25dp" />
 
     <TextView
@@ -40,7 +40,7 @@
         android:layout_marginTop="50dp"
         android:editable="false"
         android:text="P3"
-        android:textColor="#ffff00"
+        android:textColor="#191919"
         android:textSize="25dp" />
 
     <TextView
@@ -51,7 +51,7 @@
         android:layout_marginTop="50dp"
         android:editable="false"
         android:text="P4"
-        android:textColor="#ffff00"
+        android:textColor="#191919"
         android:textSize="25dp" />
 
     <TextView
@@ -62,7 +62,7 @@
         android:layout_marginLeft="70dp"
         android:editable="false"
         android:text="@string/_0"
-        android:textColor="#ffff00"
+        android:textColor="#191919"
         android:textSize="25dp" />
 
     <TextView
@@ -73,7 +73,7 @@
         android:layout_centerHorizontal="true"
         android:editable="false"
         android:text="@string/_0"
-        android:textColor="#ffff00"
+        android:textColor="#191919"
         android:textSize="25dp" />
 
     <TextView
@@ -84,7 +84,7 @@
         android:layout_marginLeft="242dp"
         android:editable="false"
         android:text="@string/_0"
-        android:textColor="#ffff00"
+        android:textColor="#191919"
         android:textSize="25dp" />
 
     <ImageButton
@@ -191,7 +191,7 @@
         android:layout_marginRight="18dp"
         android:editable="false"
         android:text="@string/your_score"
-        android:textColor="#ffff00"
+        android:textColor="#191919"
         android:textSize="25dp" />
 
     <TextView
@@ -205,7 +205,7 @@
         android:layout_marginRight="22dp"
         android:editable="false"
         android:text="@string/_0"
-        android:textColor="#ffff00"
+        android:textColor="#191919"
         android:textSize="25dp" />
 
     <Button

@@ -78,13 +78,19 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
         roomDataRef = FirebaseDatabase.getInstance().getReference().child("games").child(key);
         otherNameText = (TextView) findViewById(R.id.otherScoreStaticText);
         ready = false;
+        /*
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+            }
+        }, 3000);
         if (turnArray.get(0).equals(username)) {
             otherName = turnArray.get(1);
             otherNameText.setText(turnArray.get(1));
         } else {
             otherName = turnArray.get(0);
             otherNameText.setText(turnArray.get(0));
-        }
+        }*/
 
         useAbility = (Button) findViewById(R.id.useAbility);
         drawButton = (ImageButton) findViewById(R.id.drawButton);
@@ -113,14 +119,25 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Get room object and use the values to update the UI
                 room = dataSnapshot.getValue(Room.class);
+
                 final TextView showMessage = (TextView) findViewById(R.id.showMessage);
                 if (room.readytoStart().size() < 3 && ready == false) {
+                    otherNameText = (TextView) findViewById(R.id.otherScoreStaticText);
+                    turnArray = room.turnArray();
+                    if (turnArray.get(0).equals(username)) {
+                        otherName = turnArray.get(1);
+                        otherNameText.setText(turnArray.get(1));
+                    } else {
+                        otherName = turnArray.get(0);
+                        otherNameText.setText(turnArray.get(0));
+                    }
                     otherCards = room.getCards(otherName);
+                    ownCards = room.getCards(username);
                     for (int i = 4; i < 6; i++) {
                         boxIsEmpty[i] = true;
                         boxCards[i] = null;
                     }
-                    ownCards = room.getCards(username);
+
                     for (int j = 0; j < 4; j++) {
                         Card card = ownCards.get(j);
                         boxImages[j].setImageResource(card.getImage());
@@ -153,7 +170,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
                     if (suddendeathCount == -1 || drawnCards.size() == 52) {
                         endGame();
                     }
-                    if (dataSnapshot.hasChild("abilityUser") == true && !(room.abilityUser().equals(username))) {
+                    if (!room.abilityUser().equals("") && !(room.abilityUser().equals(username))) {
                         int newWinCondition = room.winCondition();
                         if (!(winCondition == newWinCondition)) {
                             winCondition = newWinCondition;

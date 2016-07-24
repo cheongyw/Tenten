@@ -227,12 +227,18 @@ public class waitingRoom extends AppCompatActivity {
     }
 
     public void movetoGame() {
-        Intent intent = new Intent(this, MultiGameActivity.class);
+        final Intent intent = new Intent(this, MultiGameActivity.class);
         intent.putExtra("key", key);
         intent.putExtra("user", username);
         intent.putExtra("turnOrder", turnArray);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-        finish();
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                startActivity(intent);
+                finish();
+            }
+        }, 2000);
+
     }
 }
