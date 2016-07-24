@@ -131,6 +131,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         suddendeathCount = 2;
         winCondition = 0;
         drawButton.setImageResource(R.drawable.back);
+        drawButton.setVisibility(View.VISIBLE);
         continueButton.setClickable(false);
         continueButton.setVisibility(View.INVISIBLE);
 
@@ -149,6 +150,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             }
             Card card = new Card(value);
             boxImages[j].setImageResource(card.getImage());
+            boxImages[j].setVisibility(View.VISIBLE);
             boxIsEmpty[j] = false;
             boxCards[j] = card;
             updateScore(card.getValue(), tv);
@@ -169,6 +171,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         Card card = new Card(value);
         if (boxIsEmpty[0]) {
             boxImage0.setImageResource(card.getImage());
+            boxImage0.setVisibility(View.VISIBLE);
             boxIsEmpty[0] = false;
             boxCards[0] = card;
             TextView tv = (TextView)findViewById(R.id.playerScore);
@@ -197,6 +200,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if (boxIsEmpty[1]) {
             boxImage1.setImageResource(card.getImage());
+            boxImage1.setVisibility(View.VISIBLE);
             boxIsEmpty[1] = false;
             boxCards[1] = card;
             TextView tv = (TextView)findViewById(R.id.playerScore);
@@ -225,6 +229,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if (boxIsEmpty[2]) {
             boxImage2.setImageResource(card.getImage());
+            boxImage2.setVisibility(View.VISIBLE);
             boxIsEmpty[2] = false;
             boxCards[2] = card;
             TextView tv = (TextView)findViewById(R.id.playerScore);
@@ -253,6 +258,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if (boxIsEmpty[3]) {
             boxImage3.setImageResource(card.getImage());
+            boxImage3.setVisibility(View.VISIBLE);
             boxIsEmpty[3] = false;
             boxCards[3] = card;
             TextView tv = (TextView)findViewById(R.id.playerScore);
@@ -281,6 +287,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if (boxIsEmpty[4]) {
             boxImage4.setImageResource(card.getImage());
+            boxImage4.setVisibility(View.VISIBLE);
             boxIsEmpty[4] = false;
             boxCards[4] = card;
             TextView tv = (TextView)findViewById(R.id.playerScore);
@@ -309,6 +316,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if (boxIsEmpty[5]){
             boxImage5.setImageResource(card.getImage());
+            boxImage5.setVisibility(View.VISIBLE);
             boxIsEmpty[5] = false;
             boxCards[5] = card;
             TextView tv = (TextView)findViewById(R.id.playerScore);
@@ -357,6 +365,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         showMessage.setText("You have the maximum number of cards. Choose one to discard.");
         final ImageView drawnCardImage = (ImageView)findViewById(R.id.drawnCardImage);
         drawnCardImage.setImageResource(c.getImage());
+        drawnCardImage.setVisibility(View.VISIBLE);
         final TextView tv = (TextView)findViewById(R.id.playerScore);
         final Card card = c;
         final int value = v;
@@ -367,7 +376,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(View view) {
                 showMessage.setText(null);
                 drawnCards.add(value);
-                drawnCardImage.setImageResource(R.drawable.empty);
+                drawnCardImage.setVisibility(View.INVISIBLE);
                 drawnCardImage.setClickable(false);
                 for (int i=0; i<boxImages.length; i++) {
                     boxImages[i].setClickable(false);
@@ -408,7 +417,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     boxImages[id].setImageResource(card.getImage());
                     updateScore(card.getValue(), tv);
                     drawnCards.add(value);
-                    drawnCardImage.setImageResource(R.drawable.empty);
+                    drawnCardImage.setVisibility(View.INVISIBLE);
                     drawnCardImage.setClickable(false);
                     for (int i=0; i<boxImages.length; i++) {
                         boxImages[i].setClickable(false);
@@ -580,7 +589,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void endRound() {
-        drawButton.setImageResource(R.drawable.empty);
+        drawButton.setVisibility(View.INVISIBLE);
         drawButton.setClickable(false);
         useAbility.setClickable(false);
         TextView playertv = (TextView)findViewById(R.id.playerScore);
@@ -748,7 +757,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         TextView tv = (TextView)findViewById(R.id.playerScore);
         updateScore(-8, tv);
-        boxImages[boxNumber].setImageResource(R.drawable.empty);
+        boxImages[boxNumber].setVisibility(View.INVISIBLE);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
         if (suddendeathCount == 0) {
@@ -771,7 +780,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         else if (howMany == 3) {
             updateScore(-10, tv);
         }
-        boxImages[boxNumber].setImageResource(R.drawable.empty);
+        boxImages[boxNumber].setVisibility(View.INVISIBLE);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
 
@@ -787,7 +796,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         TextView tv = (TextView)findViewById(R.id.playerScore);
         updateScore(-1, tv);
-        boxImages[boxNumber].setImageResource(R.drawable.empty);
+        boxImages[boxNumber].setVisibility(View.INVISIBLE);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
         if (suddendeathCount == 0) {
@@ -833,7 +842,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         else if (howMany == 3) {
             updateScore(-12, tv);
         }
-        boxImages[boxNumber].setImageResource(R.drawable.empty);
+        boxImages[boxNumber].setVisibility(View.INVISIBLE);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
         if (suddendeathCount == 0) {
@@ -851,11 +860,19 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private void restoration(int boxNumber) {
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.gamelayout);
         layout.setBackgroundColor(Color.RED);
+        round.setTextColor(Color.parseColor("#00e5ee"));
+        TextView playertext = (TextView)findViewById(R.id.playerScoreStaticText);
+        playertext.setTextColor(Color.BLACK);
+        TextView playertv = (TextView)findViewById(R.id.playerScore);
+        playertv.setTextColor(Color.BLACK);
+        TextView comptext = (TextView)findViewById(R.id.computerScoreStaticText);
+        comptext.setTextColor(Color.BLACK);
+        TextView comptv = (TextView)findViewById(R.id.computerScore);
+        comptv.setTextColor(Color.BLACK);
         winCondition = 0;
 
-        TextView tv = (TextView)findViewById(R.id.playerScore);
-        updateScore(-1, tv);
-        boxImages[boxNumber].setImageResource(R.drawable.empty);
+        updateScore(-1, playertv);
+        boxImages[boxNumber].setVisibility(View.INVISIBLE);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
         if (suddendeathCount == 0) {
@@ -876,7 +893,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         TextView tv = (TextView)findViewById(R.id.playerScore);
         updateScore(-13, tv);
-        boxImages[boxNumber].setImageResource(R.drawable.empty);
+        boxImages[boxNumber].setVisibility(View.INVISIBLE);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
         computerMoves();
@@ -885,11 +902,19 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private void sabotage(int boxNumber) {
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.gamelayout);
         layout.setBackgroundColor(Color.BLACK);
+        round.setTextColor(Color.parseColor("#00e5ee"));
+        TextView playertext = (TextView)findViewById(R.id.playerScoreStaticText);
+        playertext.setTextColor(Color.YELLOW);
+        TextView playertv = (TextView)findViewById(R.id.playerScore);
+        playertv.setTextColor(Color.YELLOW);
+        TextView comptext = (TextView)findViewById(R.id.computerScoreStaticText);
+        comptext.setTextColor(Color.YELLOW);
+        TextView comptv = (TextView)findViewById(R.id.computerScore);
+        comptv.setTextColor(Color.YELLOW);
         winCondition = 1;
 
-        TextView tv = (TextView)findViewById(R.id.playerScore);
-        updateScore(-13, tv);
-        boxImages[boxNumber].setImageResource(R.drawable.empty);
+        updateScore(-13, playertv);
+        boxImages[boxNumber].setVisibility(View.INVISIBLE);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
         if (suddendeathCount == 0) {
@@ -1022,7 +1047,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 public void run() {
                     for (int m = 0; m < toDiscardList.size(); m++) {
                         boxImages[toDiscardList.get(m)].clearAnimation();
-                        boxImages[toDiscardList.get(m)].setImageResource(R.drawable.empty);
+                        boxImages[toDiscardList.get(m)].setVisibility(View.INVISIBLE);
                         boxIsEmpty[toDiscardList.get(m)] = true;
                         boxCards[toDiscardList.get(m)] = null;
                     }
@@ -1133,7 +1158,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 public void run() {
                     for (int m = 0; m < toDiscardList.size(); m++) {
                         boxImages[toDiscardList.get(m)].clearAnimation();
-                        boxImages[toDiscardList.get(m)].setImageResource(R.drawable.empty);
+                        boxImages[toDiscardList.get(m)].setVisibility(View.INVISIBLE);
                         boxIsEmpty[toDiscardList.get(m)] = true;
                         boxCards[toDiscardList.get(m)] = null;
                     }
@@ -1155,11 +1180,19 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     private void computerrestoration(int index) {
         computerCards.remove(index);
-        TextView tv = (TextView)findViewById(R.id.computerScore);
-        updateScore(-1, tv);
-
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.gamelayout);
         layout.setBackgroundColor(Color.RED);
+        round.setTextColor(Color.parseColor("#00e5ee"));
+        TextView playertext = (TextView)findViewById(R.id.playerScoreStaticText);
+        playertext.setTextColor(Color.BLACK);
+        TextView playertv = (TextView)findViewById(R.id.playerScore);
+        playertv.setTextColor(Color.BLACK);
+        TextView comptext = (TextView)findViewById(R.id.computerScoreStaticText);
+        comptext.setTextColor(Color.BLACK);
+        TextView comptv = (TextView)findViewById(R.id.computerScore);
+        comptv.setTextColor(Color.BLACK);
+
+        updateScore(-1, comptv);
         winCondition = 0;
         if (suddendeathCount == 0) {
             endRound();
@@ -1185,11 +1218,19 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     private void computersabotage(int index) {
         computerCards.remove(index);
-        TextView tv = (TextView)findViewById(R.id.computerScore);
-        updateScore(-13, tv);
-
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.gamelayout);
         layout.setBackgroundColor(Color.BLACK);
+        round.setTextColor(Color.parseColor("#00e5ee"));
+        TextView playertext = (TextView)findViewById(R.id.playerScoreStaticText);
+        playertext.setTextColor(Color.YELLOW);
+        TextView playertv = (TextView)findViewById(R.id.playerScore);
+        playertv.setTextColor(Color.YELLOW);
+        TextView comptext = (TextView)findViewById(R.id.computerScoreStaticText);
+        comptext.setTextColor(Color.YELLOW);
+        TextView comptv = (TextView)findViewById(R.id.computerScore);
+        comptv.setTextColor(Color.YELLOW);
+
+        updateScore(-13, comptv);
         winCondition = 1;
         if (suddendeathCount == 0) {
             endRound();

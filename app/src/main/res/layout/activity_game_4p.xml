@@ -8,14 +8,14 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:id="@+id/gamelayout4P"
-    android:background="@drawable/redbackground"
+    android:background="@drawable/woodbackground"
     tools:context="com.cheong.tenten.GameActivity4P">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="30dp"
-        android:textColor="#00e5ee"
+        android:textColor="#000080"
         android:editable="false"
         android:id="@+id/round_4P"
         android:layout_centerHorizontal="true"
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:textSize="25dp"
         android:text="@string/com_1"
-        android:textColor="#ffff00"
+        android:textColor="#000000"
         android:editable="false"
         android:id="@+id/com1Text"
         android:layout_marginLeft="40dp"
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:textSize="25dp"
         android:text="@string/com_2"
-        android:textColor="#ffff00"
+        android:textColor="#000000"
         android:editable="false"
         android:id="@+id/com2Text"
         android:layout_centerHorizontal="true"
@@ -48,7 +48,7 @@
         android:layout_height="wrap_content"
         android:textSize="25dp"
         android:text="@string/com_3"
-        android:textColor="#ffff00"
+        android:textColor="#000000"
         android:editable="false"
         android:id="@+id/com3Text"
         android:layout_marginLeft="217dp"
@@ -59,7 +59,7 @@
         android:layout_height="wrap_content"
         android:textSize="25dp"
         android:text="@string/_0"
-        android:textColor="#ffff00"
+        android:textColor="#000000"
         android:editable="false"
         android:id="@+id/com1Score"
         android:layout_below="@+id/com1Text"
@@ -71,7 +71,7 @@
         android:layout_height="wrap_content"
         android:textSize="25dp"
         android:text="@string/_0"
-        android:textColor="#ffff00"
+        android:textColor="#000000"
         android:editable="false"
         android:id="@+id/com2Score"
         android:layout_below="@+id/com2Text"
@@ -83,7 +83,7 @@
         android:layout_height="wrap_content"
         android:textSize="25dp"
         android:text="@string/_0"
-        android:textColor="#ffff00"
+        android:textColor="#000000"
         android:editable="false"
         android:id="@+id/com3Score"
         android:layout_below="@+id/com3Text"
@@ -106,7 +106,6 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/drawButton4P"
         android:layout_marginTop="116dp"
-        android:src="@drawable/empty"
         android:padding="4dp" />
 
     <TextView
@@ -127,7 +126,6 @@
         android:layout_toLeftOf="@+id/boxImage2_4P"
         android:layout_below="@+id/drawButton4P"
         android:layout_marginTop="60dp"
-        android:src="@drawable/empty"
         android:padding="4dp" />
 
     <ImageView
@@ -136,7 +134,6 @@
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@+id/boxImage3_4P"
         android:layout_below="@+id/boxImage0_4P"
-        android:src="@drawable/empty"
         android:padding="4dp" />
 
     <ImageView
@@ -145,7 +142,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/drawButton4P"
         android:layout_marginTop="60dp"
-        android:src="@drawable/empty"
         android:padding="4dp"
         android:layout_centerHorizontal="true" />
 
@@ -154,7 +150,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/boxImage2_4P"
-        android:src="@drawable/empty"
         android:padding="4dp"
         android:layout_centerHorizontal="true" />
 
@@ -165,7 +160,6 @@
         android:layout_toRightOf="@+id/boxImage2_4P"
         android:layout_below="@+id/drawButton4P"
         android:layout_marginTop="60dp"
-        android:src="@drawable/empty"
         android:padding="4dp" />
 
     <ImageView
@@ -174,7 +168,6 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/boxImage3_4P"
         android:layout_below="@+id/boxImage4_4P"
-        android:src="@drawable/empty"
         android:padding="4dp" />
 
     <TextView
@@ -182,7 +175,7 @@
         android:layout_height="wrap_content"
         android:textSize="25dp"
         android:text="@string/your_score"
-        android:textColor="#ffff00"
+        android:textColor="#000000"
         android:editable="false"
         android:id="@+id/playerText4P"
         android:layout_alignParentBottom="true"
@@ -196,7 +189,7 @@
         android:layout_height="wrap_content"
         android:textSize="25dp"
         android:text="@string/_0"
-        android:textColor="#ffff00"
+        android:textColor="#000000"
         android:editable="false"
         android:id="@+id/playerScore4P"
         android:layout_alignParentBottom="true"

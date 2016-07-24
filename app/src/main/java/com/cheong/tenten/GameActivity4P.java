@@ -146,6 +146,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
         suddendeathCount = 4;
         winCondition = 0;
         drawButton.setImageResource(R.drawable.back);
+        drawButton.setVisibility(View.VISIBLE);
         continueButton.setClickable(false);
         continueButton.setVisibility(View.INVISIBLE);
 
@@ -162,6 +163,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
             }
             Card card = new Card(value);
             boxImages[j].setImageResource(card.getImage());
+            boxImages[j].setVisibility(View.VISIBLE);
             boxIsEmpty[j] = false;
             boxCards[j] = card;
             updateScore(card.getValue(), tv);
@@ -211,6 +213,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
         Card card = new Card(value);
         if (boxIsEmpty[0]) {
             boxImage0.setImageResource(card.getImage());
+            boxImage0.setVisibility(View.VISIBLE);
             boxIsEmpty[0] = false;
             boxCards[0] = card;
             TextView tv = (TextView)findViewById(R.id.playerScore4P);
@@ -239,6 +242,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
         }
         else if (boxIsEmpty[1]) {
             boxImage1.setImageResource(card.getImage());
+            boxImage1.setVisibility(View.VISIBLE);
             boxIsEmpty[1] = false;
             boxCards[1] = card;
             TextView tv = (TextView)findViewById(R.id.playerScore4P);
@@ -267,6 +271,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
         }
         else if (boxIsEmpty[2]) {
             boxImage2.setImageResource(card.getImage());
+            boxImage2.setVisibility(View.VISIBLE);
             boxIsEmpty[2] = false;
             boxCards[2] = card;
             TextView tv = (TextView)findViewById(R.id.playerScore4P);
@@ -295,6 +300,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
         }
         else if (boxIsEmpty[3]) {
             boxImage3.setImageResource(card.getImage());
+            boxImage3.setVisibility(View.VISIBLE);
             boxIsEmpty[3] = false;
             boxCards[3] = card;
             TextView tv = (TextView)findViewById(R.id.playerScore4P);
@@ -323,6 +329,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
         }
         else if (boxIsEmpty[4]) {
             boxImage4.setImageResource(card.getImage());
+            boxImage4.setVisibility(View.VISIBLE);
             boxIsEmpty[4] = false;
             boxCards[4] = card;
             TextView tv = (TextView)findViewById(R.id.playerScore4P);
@@ -351,6 +358,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
         }
         else if (boxIsEmpty[5]){
             boxImage5.setImageResource(card.getImage());
+            boxImage5.setVisibility(View.VISIBLE);
             boxIsEmpty[5] = false;
             boxCards[5] = card;
             TextView tv = (TextView)findViewById(R.id.playerScore4P);
@@ -399,6 +407,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
         showMessage.setText("You have the maximum number of cards. Choose one to discard.");
         final ImageView drawnCardImage = (ImageView)findViewById(R.id.drawnCardImage4P);
         drawnCardImage.setImageResource(c.getImage());
+        drawnCardImage.setVisibility(View.VISIBLE);
         final TextView tv = (TextView)findViewById(R.id.playerScore4P);
         final Card card = c;
         final int value = v;
@@ -409,7 +418,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
             public void onClick(View view) {
                 showMessage.setText(null);
                 drawnCards.add(value);
-                drawnCardImage.setImageResource(R.drawable.empty);
+                drawnCardImage.setVisibility(View.INVISIBLE);
                 drawnCardImage.setClickable(false);
                 for (int i=0; i<boxImages.length; i++) {
                     boxImages[i].setClickable(false);
@@ -448,9 +457,10 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
                     updateScore(-boxCards[id].getValue(), tv);
                     boxCards[id] = card;
                     boxImages[id].setImageResource(card.getImage());
+                    boxImages[id].setVisibility(View.VISIBLE);
                     updateScore(card.getValue(), tv);
                     drawnCards.add(value);
-                    drawnCardImage.setImageResource(R.drawable.empty);
+                    drawnCardImage.setVisibility(View.INVISIBLE);
                     drawnCardImage.setClickable(false);
                     for (int i=0; i<boxImages.length; i++) {
                         boxImages[i].setClickable(false);
@@ -657,7 +667,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
     }
 
     private void endRound() {
-        drawButton.setImageResource(R.drawable.empty);
+        drawButton.setVisibility(View.INVISIBLE);
         drawButton.setClickable(false);
         useAbility.setClickable(false);
         TextView playertv = (TextView)findViewById(R.id.playerScore4P);
@@ -867,7 +877,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
 
         TextView tv = (TextView)findViewById(R.id.playerScore4P);
         updateScore(-8, tv);
-        boxImages[boxNumber].setImageResource(R.drawable.empty);
+        boxImages[boxNumber].setVisibility(View.INVISIBLE);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
         if (suddendeathCount == 0) {
@@ -890,7 +900,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
         else if (howMany == 3) {
             updateScore(-10, tv);
         }
-        boxImages[boxNumber].setImageResource(R.drawable.empty);
+        boxImages[boxNumber].setVisibility(View.INVISIBLE);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
 
@@ -909,7 +919,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
 
         TextView tv = (TextView)findViewById(R.id.playerScore4P);
         updateScore(-1, tv);
-        boxImages[boxNumber].setImageResource(R.drawable.empty);
+        boxImages[boxNumber].setVisibility(View.INVISIBLE);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
         if (suddendeathCount == 0) {
@@ -977,7 +987,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
         else if (howMany == 3) {
             updateScore(-12, mytv);
         }
-        boxImages[boxNumber].setImageResource(R.drawable.empty);
+        boxImages[boxNumber].setVisibility(View.INVISIBLE);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
         if (suddendeathCount == 0) {
@@ -995,11 +1005,27 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
     private void restoration(int boxNumber) {
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.gamelayout4P);
         layout.setBackgroundColor(Color.RED);
-        winCondition = 0;
+        round.setTextColor(Color.parseColor("#00e5ee"));
+        TextView playertext = (TextView)findViewById(R.id.playerText4P);
+        playertext.setTextColor(Color.BLACK);
+        TextView playertv = (TextView)findViewById(R.id.playerScore4P);
+        playertv.setTextColor(Color.BLACK);
+        TextView com1text = (TextView)findViewById(R.id.com1Text);
+        com1text.setTextColor(Color.BLACK);
+        TextView com1tv = (TextView)findViewById(R.id.com1Score);
+        com1tv.setTextColor(Color.BLACK);
+        TextView com2text = (TextView)findViewById(R.id.com2Text);
+        com2text.setTextColor(Color.BLACK);
+        TextView com2tv = (TextView)findViewById(R.id.com2Score);
+        com2tv.setTextColor(Color.BLACK);
+        TextView com3text = (TextView)findViewById(R.id.com3Text);
+        com3text.setTextColor(Color.BLACK);
+        TextView com3tv = (TextView)findViewById(R.id.com3Score);
+        com3tv.setTextColor(Color.BLACK);
 
-        TextView tv = (TextView)findViewById(R.id.playerScore4P);
-        updateScore(-1, tv);
-        boxImages[boxNumber].setImageResource(R.drawable.empty);
+        winCondition = 0;
+        updateScore(-1, playertv);
+        boxImages[boxNumber].setVisibility(View.INVISIBLE);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
         if (suddendeathCount == 0) {
@@ -1020,7 +1046,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
 
         TextView tv = (TextView)findViewById(R.id.playerScore4P);
         updateScore(-13, tv);
-        boxImages[boxNumber].setImageResource(R.drawable.empty);
+        boxImages[boxNumber].setVisibility(View.INVISIBLE);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
         computerMoves(0);
@@ -1029,11 +1055,27 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
     private void sabotage(int boxNumber) {
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.gamelayout4P);
         layout.setBackgroundColor(Color.BLACK);
-        winCondition = 1;
+        round.setTextColor(Color.parseColor("#00e5ee"));
+        TextView playertext = (TextView)findViewById(R.id.playerText4P);
+        playertext.setTextColor(Color.YELLOW);
+        TextView playertv = (TextView)findViewById(R.id.playerScore4P);
+        playertv.setTextColor(Color.YELLOW);
+        TextView com1text = (TextView)findViewById(R.id.com1Text);
+        com1text.setTextColor(Color.YELLOW);
+        TextView com1tv = (TextView)findViewById(R.id.com1Score);
+        com1tv.setTextColor(Color.YELLOW);
+        TextView com2text = (TextView)findViewById(R.id.com2Text);
+        com2text.setTextColor(Color.YELLOW);
+        TextView com2tv = (TextView)findViewById(R.id.com2Score);
+        com2tv.setTextColor(Color.YELLOW);
+        TextView com3text = (TextView)findViewById(R.id.com3Text);
+        com3text.setTextColor(Color.YELLOW);
+        TextView com3tv = (TextView)findViewById(R.id.com3Score);
+        com3tv.setTextColor(Color.YELLOW);
 
-        TextView tv = (TextView)findViewById(R.id.playerScore4P);
-        updateScore(-13, tv);
-        boxImages[boxNumber].setImageResource(R.drawable.empty);
+        winCondition = 1;
+        updateScore(-13, playertv);
+        boxImages[boxNumber].setVisibility(View.INVISIBLE);
         boxIsEmpty[boxNumber] = true;
         boxCards[boxNumber] = null;
         if (suddendeathCount == 0) {
@@ -1250,7 +1292,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
                 public void run() {
                     for (int m = 0; m < toDiscardList.size(); m++) {
                         boxImages[toDiscardList.get(m)].clearAnimation();
-                        boxImages[toDiscardList.get(m)].setImageResource(R.drawable.empty);
+                        boxImages[toDiscardList.get(m)].setVisibility(View.INVISIBLE);
                         boxIsEmpty[toDiscardList.get(m)] = true;
                         boxCards[toDiscardList.get(m)] = null;
                     }
@@ -1468,7 +1510,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
                 public void run() {
                     for (int m = 0; m < toDiscardList.size(); m++) {
                         boxImages[toDiscardList.get(m)].clearAnimation();
-                        boxImages[toDiscardList.get(m)].setImageResource(R.drawable.empty);
+                        boxImages[toDiscardList.get(m)].setVisibility(View.INVISIBLE);
                         boxIsEmpty[toDiscardList.get(m)] = true;
                         boxCards[toDiscardList.get(m)] = null;
                     }
@@ -1496,21 +1538,37 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
     private void computerrestoration(int index, int which) {
         ArrayList<Card> computerCards = comCards[which];
         computerCards.remove(index);
-        TextView tv;
-        if (which == 0) {
-            tv = (TextView) findViewById(R.id.com1Score);
-        }
-        else if (which == 1) {
-            tv = (TextView) findViewById(R.id.com2Score);
-        }
-        else{
-            tv = (TextView) findViewById(R.id.com3Score);
-        }
-        updateScore(-1, tv);
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.gamelayout4P);
         layout.setBackgroundColor(Color.RED);
+        round.setTextColor(Color.parseColor("#00e5ee"));
+        TextView playertext = (TextView)findViewById(R.id.playerText4P);
+        playertext.setTextColor(Color.BLACK);
+        TextView playertv = (TextView)findViewById(R.id.playerScore4P);
+        playertv.setTextColor(Color.BLACK);
+        TextView com1text = (TextView)findViewById(R.id.com1Text);
+        com1text.setTextColor(Color.BLACK);
+        TextView com1tv = (TextView)findViewById(R.id.com1Score);
+        com1tv.setTextColor(Color.BLACK);
+        TextView com2text = (TextView)findViewById(R.id.com2Text);
+        com2text.setTextColor(Color.BLACK);
+        TextView com2tv = (TextView)findViewById(R.id.com2Score);
+        com2tv.setTextColor(Color.BLACK);
+        TextView com3text = (TextView)findViewById(R.id.com3Text);
+        com3text.setTextColor(Color.BLACK);
+        TextView com3tv = (TextView)findViewById(R.id.com3Score);
+        com3tv.setTextColor(Color.BLACK);
+
         winCondition = 0;
+        if (which == 0) {
+            updateScore(-1, com1tv);
+        }
+        else if (which == 1) {
+            updateScore(-1, com2tv);
+        }
+        else{
+            updateScore(-1, com3tv);
+        }
         if (suddendeathCount == 0) {
             endRound();
         }
@@ -1559,21 +1617,37 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
     private void computersabotage(int index, int which) {
         ArrayList<Card> computerCards = comCards[which];
         computerCards.remove(index);
-        TextView tv;
-        if (which == 0) {
-            tv = (TextView) findViewById(R.id.com1Score);
-        }
-        else if (which == 1) {
-            tv = (TextView) findViewById(R.id.com2Score);
-        }
-        else{
-            tv = (TextView) findViewById(R.id.com3Score);
-        }
-        updateScore(-13, tv);
 
         RelativeLayout layout = (RelativeLayout) findViewById(R.id.gamelayout4P);
         layout.setBackgroundColor(Color.BLACK);
+        round.setTextColor(Color.parseColor("#00e5ee"));
+        TextView playertext = (TextView)findViewById(R.id.playerText4P);
+        playertext.setTextColor(Color.YELLOW);
+        TextView playertv = (TextView)findViewById(R.id.playerScore4P);
+        playertv.setTextColor(Color.YELLOW);
+        TextView com1text = (TextView)findViewById(R.id.com1Text);
+        com1text.setTextColor(Color.YELLOW);
+        TextView com1tv = (TextView)findViewById(R.id.com1Score);
+        com1tv.setTextColor(Color.YELLOW);
+        TextView com2text = (TextView)findViewById(R.id.com2Text);
+        com2text.setTextColor(Color.YELLOW);
+        TextView com2tv = (TextView)findViewById(R.id.com2Score);
+        com2tv.setTextColor(Color.YELLOW);
+        TextView com3text = (TextView)findViewById(R.id.com3Text);
+        com3text.setTextColor(Color.YELLOW);
+        TextView com3tv = (TextView)findViewById(R.id.com3Score);
+        com3tv.setTextColor(Color.YELLOW);
+
         winCondition = 1;
+        if (which == 0) {
+            updateScore(-13, com1tv);
+        }
+        else if (which == 1) {
+            updateScore(-13, com2tv);
+        }
+        else{
+            updateScore(-13, com3tv);
+        }
         if (suddendeathCount == 0) {
             endRound();
         }
