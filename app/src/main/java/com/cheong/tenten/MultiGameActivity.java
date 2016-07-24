@@ -51,7 +51,6 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
     private int suddendeathCount;
     private int winCondition;
     private boolean gameEnded;
-    private String[] players;
 
     private DatabaseReference roomDataRef;
     private String key;
@@ -805,6 +804,7 @@ public class MultiGameActivity extends AppCompatActivity implements View.OnClick
             }
         }
         room.setCards(otherName, otherCards);
+        room.setDeactivateCheck(true);
 
         TextView tv = (TextView) findViewById(R.id.playerScore);
         updateScore(-1, tv, username);
