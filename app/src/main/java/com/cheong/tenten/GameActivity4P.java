@@ -1292,6 +1292,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
                 public void run() {
                     for (int m = 0; m < toDiscardList.size(); m++) {
                         boxImages[toDiscardList.get(m)].clearAnimation();
+                        boxImages[toDiscardList.get(m)].setImageResource(R.drawable.empty);
                         boxImages[toDiscardList.get(m)].setVisibility(View.INVISIBLE);
                         boxIsEmpty[toDiscardList.get(m)] = true;
                         boxCards[toDiscardList.get(m)] = null;
@@ -1510,6 +1511,7 @@ public class GameActivity4P extends AppCompatActivity implements View.OnClickLis
                 public void run() {
                     for (int m = 0; m < toDiscardList.size(); m++) {
                         boxImages[toDiscardList.get(m)].clearAnimation();
+                        boxImages[toDiscardList.get(m)].setImageResource(R.drawable.empty);
                         boxImages[toDiscardList.get(m)].setVisibility(View.INVISIBLE);
                         boxIsEmpty[toDiscardList.get(m)] = true;
                         boxCards[toDiscardList.get(m)] = null;
